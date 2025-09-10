@@ -22,6 +22,15 @@ document.addEventListener('DOMContentLoaded', function() {
         closePdfBtn.addEventListener('click', closePdfModal);
     }
     
+    // Add click handler for window sticker link in footer
+    const windowStickerLink = document.getElementById('window-sticker-link');
+    if (windowStickerLink) {
+        windowStickerLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            openPdfViewer('images/inside/window.pdf', 'Window Sticker');
+        });
+    }
+    
     // Initialize thumbnail click handlers
     const allThumbnails = document.querySelectorAll('.thumbnail');
     if (allThumbnails.length > 0) {

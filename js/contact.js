@@ -48,19 +48,78 @@ document.addEventListener('DOMContentLoaded', function() {
     // Validate form fields
     function validateForm() {
         let isValid = true;
-        const requiredFields = form.querySelectorAll('[required]');
         
-        requiredFields.forEach(field => {
-            if (!field.value.trim()) {
-                showError(field, 'This field is required');
-                isValid = false;
-            } else if (field.type === 'email' && !validateEmail(field.value)) {
-                showError(field, 'Please enter a valid email address');
-                isValid = false;
-            } else {
-                removeError(field);
+        // Reset all error messages and field styles
+        document.querySelectorAll('.error-message').forEach(el => {
+            el.textContent = '';
+            el.className = 'error-message';
+        });
+        
+        document.querySelectorAll('.form-group input, .form-group select, .form-group textarea').forEach(field => {
+            field.classList.remove('error');
+            const errorElement = field.parentElement.querySelector('.error-message');
+            if (errorElement) {
+                errorElement.textContent = '';
             }
         });
+        
+        // Validate name
+        const name = document.getElementById('name');
+        if (!name.value.trim()) {
+            showError(name, 'Please enter your name');
+            isValid = false;
+        } else if (!/^[A-Za-z\s-]{2,}$/.test(name.value.trim())) {
+            showError(name, 'Name must be at least 2 characters long and contain only letters, spaces, or hyphens');
+            isValid = false;
+        }
+        
+        // Validate email
+        const email = document.getElementById('email');
+        if (!email.value.trim()) {
+            showError(email, 'Please enter your email address');
+            isValid = false;
+        } else if (!validateEmail(email.value.trim())) {
+            showError(email, 'Please enter a valid email address (e.g., yourname@example.com)');
+            isValid = false;
+        }
+        
+        // Validate phone
+        const phone = document.getElementById('phone');
+        if (!phone.value.trim()) {
+            showError(phone, 'Please enter your phone number');
+            isValid = false;
+        } else if (!/^[0-9\-\+\(\)\s]{10,}$/.test(phone.value.trim())) {
+            showError(phone, 'Please enter a valid phone number (at least 10 digits)');
+            isValid = false;
+        }
+        
+        // Validate subject
+        const subject = document.getElementById('subject');
+        if (!subject.value) {
+            showError(subject, 'Please select an inquiry type');
+            isValid = false;
+        }
+        
+        // Validate message
+        const message = document.getElementById('message');
+        if (!message.value.trim()) {
+            showError(message, 'Please enter your message');
+            isValid = false;
+        } else if (message.value.trim().length < 10) {
+            showError(message, 'Message must be at least 10 characters long');
+            isValid = false;
+        } else if (message.value.trim().length > 1000) {
+            showError(message, 'Message cannot exceed 1000 characters');
+            isValid = false;
+        }
+        
+        // Scroll to first error if any
+        if (!isValid) {
+            const firstError = document.querySelector('.error');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
         
         return isValid;
     }
@@ -324,8 +383,12 @@ This message was sent from the 1997 Porsche 911 Carrera 4S contact form`;
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        if (!validateForm()) {
-            return;
+        // First, trigger HTML5 validation
+        if (!form.checkValidity()) {
+            // If HTML5 validation fails, trigger our custom validation
+            if (!validateForm()) {
+                return false;
+            }
         }
         
         // Get form data
@@ -336,6 +399,8 @@ This message was sent from the 1997 Porsche 911 Carrera 4S contact form`;
         updatePreviewContent(formDataObj);
         modal.style.display = 'block';
         document.body.style.overflow = 'hidden';
+        
+        return false;
     });
     
     // Handle "Send Another" button click
