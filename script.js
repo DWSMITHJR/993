@@ -483,6 +483,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }).join('');
 
+        // Ensure all message sections are properly closed
+        const closedFormattedBody = formattedBody.endsWith('</div>') ? formattedBody : formattedBody + '</div>';
+
         emailPreview.innerHTML = `
             <div class="email-preview-container">
                 <div class="email-header">
@@ -490,26 +493,46 @@ document.addEventListener('DOMContentLoaded', function() {
                     <p class="email-subject"><strong>Subject:</strong> ${subject}</p>
                 </div>
                 <div class="email-body">
-                    ${formattedBody}
+                    ${closedFormattedBody}
                 </div>
             </div>
         `;
         
-        // Show modal
-        emailPreviewModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        // Show modal with animation
+        emailPreviewModal.style.display = 'flex';
+        setTimeout(() => {
+            emailPreviewModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }, 10);
     }
 
     // Close modal
     function closeModal() {
         emailPreviewModal.classList.remove('active');
-        document.body.style.overflow = '';
+        setTimeout(() => {
+            emailPreviewModal.style.display = 'none';
+            document.body.style.overflow = '';
+        }, 300); // Match this with your CSS transition time
     }
 
     // Event listeners for modal
     if (closeModalBtn) {
         closeModalBtn.addEventListener('click', closeModal);
     }
+
+    // Close modal when clicking the overlay (outside content)
+    window.addEventListener('click', (e) => {
+        if (e.target === emailPreviewModal) {
+            closeModal();
+        }
+    });
+
+    // Close modal with Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && emailPreviewModal.classList.contains('active')) {
+            closeModal();
+        }
+    });
 
     // Close modal when clicking outside content
     window.addEventListener('click', (e) => {
