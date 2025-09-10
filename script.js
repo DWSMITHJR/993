@@ -431,6 +431,146 @@ document.addEventListener('DOMContentLoaded', function() {
     if (slideshowBtn) {
         slideshowBtn.addEventListener('click', startSlideshow);
     }
+
+    // Contact Form Handling
+    const contactForm = document.getElementById('inquiry-form');
+    const emailPreviewModal = document.getElementById('email-preview-modal');
+    const emailPreview = document.getElementById('email-preview');
+    const closeModalBtn = document.querySelector('.close-modal');
+    const sendEmailBtn = document.getElementById('send-email');
+    const editEmailBtn = document.getElementById('edit-email');
+    const emailSender = document.getElementById('email-sender');
+
+    if (contactForm) {
+        // Form submission
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const formData = new FormData(contactForm);
+            const formProps = Object.fromEntries(formData);
+            
+            // Ensure subject has a valid value
+            const inquiryType = formProps.subject || 'General Inquiry';
+            const subject = `Inquiry about 1997 Porsche 911 Carrera 4S - ${inquiryType}`;
+            const body = `Name: ${formProps.name}\n` +
+                        `Email: ${formProps.email}\n` +
+                        `Phone: ${formProps.phone || 'Not provided'}\n\n` +
+                        `Message:\n${formProps.message}`;
+            
+            // Store email data for sending
+            emailSender.dataset.subject = subject;
+            emailSender.dataset.body = body;
+            
+            // Show preview
+            showEmailPreview(formProps, subject, body);
+        });
+    }
+
+    // Show email preview modal
+    function showEmailPreview(formData, subject, body) {
+        // Format the body with proper line breaks and styling
+        const formattedBody = body.split('\n').map(line => {
+            if (line.startsWith('Name:') || line.startsWith('Email:') || line.startsWith('Phone:')) {
+                const [label, value] = line.split(':');
+                return `<p class="email-field"><strong>${label}:</strong> ${value || 'Not provided'}</p>`;
+            } else if (line === 'Message:') {
+                return `<div class="message-section"><strong>Message:</strong>`;
+            } else if (line.trim() === '') {
+                return '</div>';
+            } else {
+                return `<p class="message-text">${line}</p>`;
+            }
+        }).join('');
+
+        emailPreview.innerHTML = `
+            <div class="email-preview-container">
+                <div class="email-header">
+                    <p class="email-to"><strong>To:</strong> phdproton@pm.me</p>
+                    <p class="email-subject"><strong>Subject:</strong> ${subject}</p>
+                </div>
+                <div class="email-body">
+                    ${formattedBody}
+                </div>
+            </div>
+        `;
+        
+        // Show modal
+        emailPreviewModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Close modal
+    function closeModal() {
+        emailPreviewModal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+    // Event listeners for modal
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', closeModal);
+    }
+
+    // Close modal when clicking outside content
+    window.addEventListener('click', (e) => {
+        if (e.target === emailPreviewModal) {
+            closeModal();
+        }
+    });
+
+    // Send email
+    if (sendEmailBtn) {
+        sendEmailBtn.addEventListener('click', function() {
+            const subject = emailSender.dataset.subject || '';
+            const body = emailSender.dataset.body || '';
+            const mailtoLink = `mailto:phdproton@pm.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            
+            // Update button state
+            const buttonText = sendEmailBtn.querySelector('.button-text');
+            const originalText = buttonText.textContent;
+            buttonText.textContent = 'Sending...';
+            sendEmailBtn.disabled = true;
+            
+            // Open email client
+            window.location.href = mailtoLink;
+            
+            // Reset button after a short delay
+            setTimeout(() => {
+                buttonText.textContent = 'Email Sent!';
+                // Show success message
+                emailPreview.innerHTML = `
+                    <div class="success-message">
+                        <i class="fas fa-check-circle"></i>
+                        <h4>Thank you for your inquiry!</h4>
+                        <p>We will contact you shortly.</p>
+                    </div>
+                `;
+                
+                setTimeout(() => {
+                    closeModal();
+                    contactForm.reset();
+                    buttonText.textContent = originalText;
+                    sendEmailBtn.disabled = false;
+                }, 3000);
+            }, 500);
+        });
+    }
+    
+    // Edit email
+    if (editEmailBtn) {
+        editEmailBtn.addEventListener('click', function() {
+            closeModal();
+            // Scroll to form
+            document.querySelector('#inquiry-form').scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+    
+    // Close modal with Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && emailPreviewModal.classList.contains('active')) {
+            closeModal();
+        }
+    });
     
     // Update current slide index when clicking on thumbnails
     thumbnails.forEach((thumb, index) => {

@@ -234,20 +234,58 @@
             </div>
             <form id="inquiry-form" class="contact-form">
                 <h3>Request Information</h3>
+                <div id="form-message" class="form-message"></div>
                 <div class="form-group">
-                    <input type="text" id="name" placeholder="Full Name" required>
+                    <input type="text" id="name" name="name" placeholder="Full Name" required 
+                           pattern="[A-Za-z\s-]{2,}" 
+                           title="Please enter at least 2 characters">
                 </div>
                 <div class="form-group">
-                    <input type="email" id="email" placeholder="Email Address" required>
+                    <input type="email" id="email" name="email" placeholder="Email Address" required>
                 </div>
                 <div class="form-group">
-                    <input type="tel" id="phone" placeholder="Phone Number">
+                    <input type="tel" id="phone" name="phone" placeholder="Phone Number"
+                           pattern="[0-9\-\+\(\)\s]{10,}"
+                           title="Please enter a valid phone number">
                 </div>
                 <div class="form-group">
-                    <textarea id="message" placeholder="Your Message" rows="4" required></textarea>
+                    <select id="subject" name="subject" required>
+                        <option value="" disabled selected>Select Inquiry Type</option>
+                        <option value="Purchase Inquiry">Purchase Inquiry</option>
+                        <option value="Request More Info">Request More Info</option>
+                        <option value="Schedule Viewing">Schedule Viewing</option>
+                        <option value="Other">Other</option>
+                    </select>
                 </div>
-                <button type="submit" class="cta-button">Send Inquiry</button>
+                <div class="form-group">
+                    <textarea id="message" name="message" placeholder="Your Message" rows="4" required
+                              minlength="10" maxlength="1000"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="cta-button">
+                        <span class="button-text">Send Inquiry</span>
+                        <span class="button-loading"><i class="fas fa-spinner fa-spin"></i></span>
+                    </button>
+                </div>
             </form>
+            <!-- Email Preview Modal -->
+            <div id="email-preview-modal" class="modal">
+                <div class="modal-content">
+                    <span class="close-modal">&times;</span>
+                    <h3>Review Your Message</h3>
+                    <div id="email-preview" class="email-preview"></div>
+                    <div class="modal-actions">
+                        <button id="send-email" class="cta-button">
+                            <i class="fas fa-paper-plane"></i> Send Email
+                        </button>
+                        <button id="edit-email" class="cta-button secondary">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Hidden mailto link for form submission -->
+            <a id="email-sender" href="#" class="visually-hidden" aria-hidden="true"></a>
         </div>
     </section>
 
