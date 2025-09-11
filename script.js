@@ -9,27 +9,49 @@ document.addEventListener('DOMContentLoaded', function() {
     const mainImage = document.getElementById('main-image');
     const thumbnails = document.querySelectorAll('.thumbnail:not(.pdf-thumbnail)');
     const slideshowBtn = document.getElementById('slideshow-btn');
-    const pdfModal = document.getElementById('pdfModal');
-    const pdfViewer = document.getElementById('pdfViewer');
-    const closePdfBtn = document.querySelector('.close-pdf');
     
     // Initialize event listeners
     if (slideshowBtn) {
         slideshowBtn.addEventListener('click', toggleSlideshow);
     }
     
-    if (closePdfBtn) {
-        closePdfBtn.addEventListener('click', closePdfModal);
-    }
-    
     // Add click handler for window sticker link in footer
     const windowStickerLink = document.getElementById('window-sticker-link');
     if (windowStickerLink) {
-        windowStickerLink.addEventListener('click', (e) => {
+        windowStickerLink.addEventListener('click', function(e) {
             e.preventDefault();
             openPdfViewer('images/inside/window.pdf', 'Window Sticker');
         });
     }
+    
+    // Add click handler for PDF thumbnails
+    document.addEventListener('click', function(e) {
+        try {
+            // Check if the clicked element is a PDF thumbnail or a child of one
+            const pdfThumbnail = e.target.closest('.pdf-thumbnail, [data-full$=".pdf"]');
+            if (pdfThumbnail) {
+                console.log('PDF thumbnail clicked:', pdfThumbnail);
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const pdfPath = pdfThumbnail.getAttribute('data-full');
+                const title = pdfThumbnail.getAttribute('data-caption') || 'Document';
+                
+                console.log('PDF Path:', pdfPath);
+                console.log('Title:', title);
+                
+                if (!pdfPath) {
+                    console.error('No PDF path found in data-full attribute');
+                    return false;
+                }
+                
+                openPdfViewer(pdfPath, title);
+                return false;
+            }
+        } catch (error) {
+            console.error('Error handling PDF thumbnail click:', error);
+        }
+    });
     
     // Initialize thumbnail click handlers
     const allThumbnails = document.querySelectorAll('.thumbnail');
@@ -220,128 +242,115 @@ function closeModal(modal) {
     document.body.style.overflow = 'auto';
 }
 
-// Open PDF viewer
+// Open PDF in a modal
 function openPdfViewer(pdfPath, title) {
-    const pdfModal = document.getElementById('pdfModal');
-    const pdfViewer = document.getElementById('pdfViewer');
-    const pdfTitle = document.getElementById('pdf-title');
-    const pdfContainer = document.querySelector('.pdf-container');
+    console.log('Opening PDF:', pdfPath); // Debug log
     
-    if (!pdfModal || !pdfViewer || !pdfTitle || !pdfContainer) return;
-    
-    try {
-        // Set the title
-        pdfTitle.textContent = title || 'Document';
-        
-        // Show loading state
-        pdfViewer.style.opacity = '0';
-        
-        // Handle both relative and absolute paths
-        const fullPdfPath = pdfPath.startsWith('http') || pdfPath.startsWith('/') 
-            ? pdfPath 
-            : `./${pdfPath.replace(/\\/g, '/')}`;
-        
-        // Set up error handling for the iframe
-        const onPdfLoad = () => {
-            pdfViewer.style.opacity = '1';
-            pdfViewer.removeEventListener('error', onPdfError);
-        };
-        
-        const onPdfError = () => {
-            console.error('Failed to load PDF:', fullPdfPath);
-            alert('Unable to load the document. Please try again later.');
-            closePdfModal();
-        };
-        
-        pdfViewer.addEventListener('load', onPdfLoad, { once: true });
-        pdfViewer.addEventListener('error', onPdfError, { once: true });
-        
-        // Set the PDF source
-        pdfViewer.src = fullPdfPath + '#toolbar=1&navpanes=1&scrollbar=1';
-        
-        // Show the modal with animation
-        pdfModal.style.display = 'flex';
-        document.body.style.overflow = 'hidden';
-        
-        // Focus trap for accessibility
-        pdfModal.setAttribute('aria-hidden', 'false');
-        
-        // Close modal when clicking outside the content
-        const handleOutsideClick = (e) => {
-            if (e.target === pdfModal) {
-                closePdfModal();
-            }
-        };
-        
-        // Close with Escape key
-        const handleKeyDown = (e) => {
-            if (e.key === 'Escape') {
-                closePdfModal();
-            }
-        };
-        
-        pdfModal.addEventListener('click', handleOutsideClick);
-        document.addEventListener('keydown', handleKeyDown);
-        
-        // Store event listeners for cleanup
-        pdfModal._clickHandler = handleOutsideClick;
-        document._keyDownHandler = handleKeyDown;
-        
-        // Pause slideshow if playing
-        if (isPlaying) {
-            stopSlideshow();
-        }
-        
-        // Set focus to the close button for better keyboard navigation
-        const closeBtn = pdfModal.querySelector('.close-pdf');
-        if (closeBtn) {
-            setTimeout(() => closeBtn.focus(), 100);
-        }
-    } catch (error) {
-        console.error('Error opening PDF viewer:', error);
-        alert('An error occurred while trying to open the document.');
+    // Ensure the path is correct
+    if (!pdfPath) {
+        console.error('No PDF path provided');
+        return;
     }
+    
+    // Remove any leading slash to prevent double slashes
+    const cleanPath = pdfPath.replace(/^\//, '');
+    
+    // Create or get the modal
+    let modal = document.getElementById('pdfModal');
+    
+    // If modal doesn't exist, create it
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'pdfModal';
+        modal.className = 'modal';
+        
+        const modalContent = document.createElement('div');
+        modalContent.className = 'modal-content';
+        
+        const closeBtn = document.createElement('span');
+        closeBtn.className = 'close close-pdf';
+        closeBtn.innerHTML = '&times;';
+        closeBtn.onclick = closePdfModal;
+        
+        const titleElement = document.createElement('h2');
+        titleElement.textContent = title;
+        titleElement.style.marginBottom = '10px';
+        
+        const iframe = document.createElement('iframe');
+        iframe.id = 'pdfViewer';
+        iframe.setAttribute('frameborder', '0');
+        iframe.setAttribute('title', 'PDF Viewer');
+        iframe.style.width = '100%';
+        iframe.style.height = '80vh';
+        
+        // Build the modal structure first
+        modalContent.appendChild(closeBtn);
+        modalContent.appendChild(titleElement);
+        modalContent.appendChild(iframe);
+        modal.appendChild(modalContent);
+        document.body.appendChild(modal);
+        
+        // Add click outside to close
+        modal.addEventListener('click', function modalClickHandler(event) {
+            if (event.target === modal) {
+                closePdfModal();
+            }
+        });
+        
+        // Set the iframe source after the modal is in the DOM
+        const googleDocsViewerUrl = `https://docs.google.com/viewer?url=${window.location.origin}/${encodeURIComponent(cleanPath)}&embedded=true`;
+        console.log('Google Docs URL:', googleDocsViewerUrl); // Debug log
+        iframe.src = googleDocsViewerUrl;
+    } else {
+        // Update existing modal
+        const iframe = document.getElementById('pdfViewer');
+        const titleElement = modal.querySelector('h2');
+        
+        if (iframe) {
+            const googleDocsViewerUrl = `https://docs.google.com/viewer?url=${window.location.origin}/${encodeURIComponent(cleanPath)}&embedded=true`;
+            console.log('Updating PDF URL:', googleDocsViewerUrl); // Debug log
+            iframe.src = googleDocsViewerUrl;
+        }
+        
+        if (titleElement) {
+            titleElement.textContent = title;
+        }
+    }
+    
+    // Show the modal
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+    
+    // Add escape key to close
+    const handleKeyDown = function(e) {
+        if (e.key === 'Escape') {
+            closePdfModal();
+        }
+    };
+    
+    // Remove any existing keydown listeners to prevent duplicates
+    modal._keyDownHandler = handleKeyDown;
+    document.addEventListener('keydown', handleKeyDown);
 }
 
 // Close PDF modal
 function closePdfModal() {
-    const pdfModal = document.getElementById('pdfModal');
-    const pdfViewer = document.getElementById('pdfViewer');
-    
-    if (!pdfModal || !pdfViewer) return;
-    
-    try {
-        // Remove event listeners
-        if (pdfModal._clickHandler) {
-            pdfModal.removeEventListener('click', pdfModal._clickHandler);
-            delete pdfModal._clickHandler;
+    const modal = document.getElementById('pdfModal');
+    if (modal) {
+        // Remove the keydown event listener
+        if (modal._keyDownHandler) {
+            document.removeEventListener('keydown', modal._keyDownHandler);
+            delete modal._keyDownHandler;
         }
         
-        if (document._keyDownHandler) {
-            document.removeEventListener('keydown', document._keyDownHandler);
-            delete document._keyDownHandler;
-        }
-        
-        // Hide modal with animation
-        pdfModal.style.opacity = '0';
-        pdfModal.setAttribute('aria-hidden', 'true');
-        
+        // Hide the modal with animation
+        modal.style.opacity = '0';
         setTimeout(() => {
-            pdfModal.style.display = 'none';
-            // Reset the iframe source when closing to prevent memory leaks
-            pdfViewer.src = 'about:blank';
+            modal.style.display = 'none';
         }, 300);
         
         // Restore body scrolling
         document.body.style.overflow = 'auto';
-        
-        // Return focus to the element that opened the modal
-        const activeElement = document.activeElement;
-        if (activeElement && activeElement.classList.contains('thumbnail')) {
-            activeElement.focus();
-        }
-    } catch (error) {
-        console.error('Error closing PDF viewer:', error);
     }
 }
 
