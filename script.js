@@ -252,17 +252,22 @@ function openPdfViewer(pdfPath, title) {
         return;
     }
     
-    // Create a full URL if it's a relative path
+    // For local development, use the direct path
+    // For GitHub Pages, the path will be relative to the repository root
     let fullPdfUrl = pdfPath;
-    if (!pdfPath.startsWith('http') && !pdfPath.startsWith('blob:')) {
-        // Handle local file paths
-        if (pdfPath.startsWith('/')) {
-            // Absolute path
-            fullPdfUrl = window.location.origin + pdfPath;
+    
+    // If it's not an absolute URL or a data URL
+    if (!pdfPath.startsWith('http') && !pdfPath.startsWith('blob:') && !pdfPath.startsWith('data:')) {
+        // Remove any leading ./ or / from the path
+        const cleanPath = pdfPath.replace(/^\.?\//, '');
+        
+        // For GitHub Pages, we need to ensure the path is relative to the repository root
+        if (window.location.hostname.includes('github.io')) {
+            // On GitHub Pages, the base URL includes the repository name
+            fullPdfUrl = cleanPath;
         } else {
-            // Relative path
-            const basePath = window.location.href.split('/').slice(0, -1).join('/');
-            fullPdfUrl = `${basePath}/${pdfPath}`.replace(/([^:]\/)\/+/g, '$1');
+            // For local development, use a relative path
+            fullPdfUrl = cleanPath;
         }
     }
     

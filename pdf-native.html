@@ -84,23 +84,49 @@
         const pdfUrl = urlParams.get('file');
         
         if (pdfUrl) {
-            // Decode the URL in case it's encoded
-            const decodedUrl = decodeURIComponent(pdfUrl);
-            
-            // Update the iframe source to show the PDF
-            const iframe = document.getElementById('pdf-viewer');
-            
-            // Set the PDF URL directly for local files or use Google Docs viewer for remote files
-            if (decodedUrl.startsWith('http') || decodedUrl.startsWith('/')) {
-                // For local files or direct URLs, use the native PDF viewer
-                iframe.src = decodedUrl;
+            try {
+                // Decode the URL in case it's encoded
+                const decodedUrl = decodeURIComponent(pdfUrl);
+                const iframe = document.getElementById('pdf-viewer');
+                const fileInfo = document.getElementById('file-info');
                 
-                // Try to extract filename from URL
-                const fileName = decodedUrl.split('/').pop() || 'document';
-                document.getElementById('file-info').textContent = `Viewing: ${fileName}`;
-            } else {
-                // Fallback for other cases
-                document.getElementById('file-info').textContent = 'Error: Invalid PDF URL';
+                // For GitHub Pages, we need to ensure the path is correct
+                let finalUrl = decodedUrl;
+                
+                // If it's a relative path (not starting with http or /)
+                if (!decodedUrl.startsWith('http') && !decodedUrl.startsWith('/') && !decodedUrl.startsWith('blob:')) {
+                    // Get the base URL (current page's directory)
+                    const baseUrl = window.location.href.split('/').slice(0, -1).join('/');
+                    // Remove any leading ./ or / from the path
+                    const cleanPath = decodedUrl.replace(/^\.?\//, '');
+                    finalUrl = `${baseUrl}/${cleanPath}`;
+                } else if (decodedUrl.startsWith('/')) {
+                    // For absolute paths, use the current origin
+                    finalUrl = window.location.origin + decodedUrl;
+                }
+                
+                console.log('Loading PDF from:', finalUrl);
+                
+                // Set the iframe source
+                iframe.src = finalUrl;
+                
+                // Extract and display the filename
+                const fileName = finalUrl.split('/').pop() || 'document';
+                fileInfo.textContent = `Viewing: ${fileName}`;
+                
+                // Handle load/error events
+                iframe.onload = function() {
+                    console.log('PDF loaded successfully');
+                };
+                
+                iframe.onerror = function() {
+                    console.error('Error loading PDF');
+                    fileInfo.textContent = 'Error: Could not load PDF. Please try again or contact support.';
+                };
+                
+            } catch (error) {
+                console.error('Error processing PDF URL:', error);
+                document.getElementById('file-info').textContent = 'Error: Invalid PDF URL format';
             }
         } else {
             document.getElementById('file-info').textContent = 'Error: No PDF file specified';
@@ -108,10 +134,10 @@
         
         // Handle window resizing
         window.addEventListener('resize', function() {
-            // This ensures the iframe resizes properly
             const iframe = document.getElementById('pdf-viewer');
             const currentSrc = iframe.src;
             if (currentSrc && currentSrc !== 'about:blank') {
+                // Force a refresh of the iframe on resize
                 iframe.src = currentSrc;
             }
         });
