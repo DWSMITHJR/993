@@ -369,14 +369,9 @@ This message was sent from the 1997 Porsche 911 Carrera 4S contact form`;
             // Create mailto link with proper encoding
             const mailtoLink = `mailto:donald@donaldwsmithjr.com?cc=u4theD@proton.me&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             
-            // Open the default email client
-            const emailWindow = window.open('', '_blank');
-            if (emailWindow) {
-                emailWindow.location.href = mailtoLink;
-            } else {
-                // Fallback method if popup is blocked
-                window.location.href = mailtoLink;
-            }
+            // Open the default email client directly
+            // Using window.location.href is more reliable than window.open for mailto links
+            window.location.href = mailtoLink;
             
             // Show success message after a short delay
             setTimeout(() => {
