@@ -1,0 +1,187 @@
+/* Form Styles */
+#contact .contact-form {
+    background: #ffffff;
+    padding: 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+#contact .contact-form h3 {
+    color: #1a1a1a;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+}
+
+#contact .form-intro {
+    color: #555;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+#contact .form-group {
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+#contact .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+#contact .form-group input[type="text"],
+#contact .form-group input[type="email"],
+#contact .form-group input[type="tel"],
+#contact .form-group select,
+#contact .form-group textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: #f9f9f9;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#contact .form-group input[type="text"]:focus,
+#contact .form-group input[type="email"]:focus,
+#contact .form-group input[type="tel"]:focus,
+#contact .form-group select:focus,
+#contact .form-group textarea:focus {
+    border-color: #d4001c;
+    box-shadow: 0 0 0 2px rgba(212, 0, 28, 0.1);
+    outline: none;
+    background-color: #fff;
+}
+
+#contact .form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+#contact .character-count {
+    text-align: right;
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: 0.3rem;
+}
+
+#contact .form-actions {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+#contact .cta-button {
+    background-color: #d4001c;
+    color: white;
+    border: none;
+    padding: 0.9rem 2.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 180px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#contact .cta-button:hover {
+    background-color: #b30017;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+#contact .cta-button .button-loading {
+    display: none;
+    margin-left: 8px;
+}
+
+#contact .cta-button.loading .button-text {
+    visibility: hidden;
+}
+
+#contact .cta-button.loading .button-loading {
+    display: inline-block;
+}
+
+/* Error States */
+#contact .error-message {
+    color: #d4001c;
+    font-size: 0.8rem;
+    margin-top: 0.3rem;
+    height: 1.2rem;
+    opacity: 0;
+    transform: translateY(-5px);
+    transition: all 0.3s ease;
+}
+
+#contact .error-message:not(:empty) {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#contact .form-group.error input,
+#contact .form-group.error select,
+#contact .form-group.error textarea {
+    border-color: #d4001c;
+    background-color: #fff9f9;
+}
+
+/* Success Message */
+#contact .success-message {
+    display: none;
+    text-align: center;
+    padding: 2rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+#contact .success-message i {
+    font-size: 3rem;
+    color: #28a745;
+    margin-bottom: 1rem;
+}
+
+#contact .success-message h3 {
+    color: #1a1a1a;
+    margin-bottom: 1rem;
+    font-family: 'Playfair Display', serif;
+}
+
+#contact .success-message p {
+    color: #555;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    #contact .contact-form {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+    
+    #contact .contact-form h3 {
+        font-size: 1.5rem;
+    }
+    
+    #contact .success-message {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+}
