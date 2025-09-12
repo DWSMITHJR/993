@@ -1,5 +1,10 @@
+// Import the email service
+import { emailService } from './email-service.js';
+
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('inquiry-form');
+    if (!form) return;
+    
     const emailInput = document.getElementById('email');
     const modal = document.getElementById('email-preview-modal');
     const closeModal = document.querySelector('.close-modal');
@@ -7,8 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const editButton = document.getElementById('edit-email');
     const emailPreview = document.getElementById('email-preview');
     const submitButton = form.querySelector('button[type="submit"]');
-    const buttonText = submitButton.querySelector('.button-text');
-    const buttonLoading = submitButton.querySelector('.button-loading');
+    const buttonText = submitButton?.querySelector('.button-text');
+    const buttonLoading = submitButton?.querySelector('.button-loading');
 
     // Email validation pattern
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -348,53 +353,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (sendButton) {
             sendButton.onclick = function() {
-                sendEmail(formData);
-            };
-        }
-    }
-    
-    // Send email using mailto
-    function sendEmail(formData) {
-        try {
-            const subject = `Inquiry about 1997 Porsche 911 Carrera 4S - ${formData.subject || 'General Inquiry'}`;
-            const body = `Name: ${formData.name || 'Not provided'}
-Email: ${formData.email || 'Not provided'}
-            
-            // Create a unique ID for this email session
-            const emailId = 'email-' + Date.now();
-            
-            // Create a form element to submit the mailto link
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = `mailto:donald@donaldwsmithjr.com?cc=u4theD@proton.me&subject=${encodeURIComponent(subject)}&body=${emailBody}`;
-            
-            // Update the display
-            if (input.tagName === 'TEXTAREA') {
-                valueDisplay.innerHTML = input.value.replace(/\n/g, '<br>');
-            } else if (input.tagName === 'SELECT') {
-                valueDisplay.textContent = input.options[input.selectedIndex].text;
-            } else {
-                valueDisplay.textContent = input.value || 'Not provided';
-            }
-            
-            // Update the original form field
-            const formField = form.querySelector(`[name="${fieldName}"]`);
-            if (formField) {
-                if (formField.tagName === 'SELECT') {
-                    formField.value = input.value;
-                } else {
-                    formField.value = input.value;
-                }
-            }
-            
-            // Toggle back to display mode
-            display.style.display = 'flex';
-            edit.style.display = 'none';
-        });
-    });
-    
-    // Cancel edit
-    document.querySelectorAll('.cancel-edit').forEach(button => {
         button.addEventListener('click', function() {
             const fieldWrapper = this.closest('.editable-field');
             const display = fieldWrapper.querySelector('.field-display');
