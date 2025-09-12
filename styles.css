@@ -496,8 +496,21 @@ section h2:after {
     border-radius: 8px;
     margin-bottom: 30px;
     text-align: center;
-    transition: all 0.3s ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    max-width: 90%;
+    width: 400px;
+}
+
+.success-message.visible {
     opacity: 1;
+    visibility: visible;
 }
 
 .success-message .success-content {
