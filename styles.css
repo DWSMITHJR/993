@@ -403,8 +403,24 @@ nav {
 .hero h2 {
     font-size: 1.8rem;
     font-weight: 300;
-    margin-bottom: 2rem;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    margin: 0 auto 2rem;
+    text-align: center;
+    position: relative;
+    padding-bottom: 15px;
+    display: block;
+    width: 100%;
+}
+
+.hero h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 80px;
+    height: 3px;
+    background: var(--accent);
     animation: fadeInUp 1s ease 0.2s;
     animation-fill-mode: both;
 }
