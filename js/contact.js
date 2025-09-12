@@ -369,14 +369,15 @@ This message was sent from the 1997 Porsche 911 Carrera 4S contact form`;
         
         const mailtoLink = `mailto:phdproton@pm.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         
-        // Close the modal and show success message
+        // Open the default email client first
+        window.location.href = mailtoLink;
+        
+        // Reset the form and hide the success message
+        form.reset();
+        document.getElementById('success-message').style.display = 'none';
+        document.getElementById('form-container').style.display = 'block';
         modal.style.display = 'none';
         document.body.style.overflow = 'auto';
-        document.getElementById('form-container').style.display = 'none';
-        document.getElementById('success-message').style.display = 'block';
-        
-        // Open the default email client
-        window.location.href = mailtoLink;
     }
 
     // Handle form submission
