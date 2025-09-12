@@ -484,6 +484,20 @@ This message was sent from the 1997 Porsche 911 Carrera 4S contact form`;
         closeModal.addEventListener('click', closeModalFunc);
     }
     
+    // Close success message when clicking outside
+    document.addEventListener('click', function(e) {
+        const successMessage = document.getElementById('success-message');
+        const successContent = document.querySelector('.success-content');
+        
+        if (successMessage && successMessage.classList.contains('active') && 
+            !successContent.contains(e.target) && 
+            e.target.id !== 'send-another') {
+            successMessage.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            document.getElementById('form-container').style.display = 'block';
+        }
+    });
+    
     window.addEventListener('click', handleOutsideClick);
     document.addEventListener('keydown', handleEscapeKey);
     
