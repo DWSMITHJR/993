@@ -5,11 +5,13 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN
 permissions:
   contents: read
   pages: write
   id-token: write
 
+# Allow one concurrent deployment
 concurrency:
   group: "pages"
   cancel-in-progress: true
@@ -18,8 +20,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -27,6 +31,7 @@ jobs:
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v2
         with:
+          # Upload entire repository
           path: .
           
       - name: Upload build artifacts
@@ -37,13 +42,15 @@ jobs:
           path: |
             dist/
             logs/
-            
+
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    
     runs-on: ubuntu-latest
     needs: build
+    
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
