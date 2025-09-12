@@ -355,9 +355,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Send email using mailto
     function sendEmail(formData) {
-        const subject = `Inquiry about 1997 Porsche 911 Carrera 4S - ${formData.subject || 'General Inquiry'}`;
-        const body = `
-Name: ${formData.name || 'Not provided'}
+        try {
+            const subject = `Inquiry about 1997 Porsche 911 Carrera 4S - ${formData.subject || 'General Inquiry'}`;
+            const body = `Name: ${formData.name || 'Not provided'}
 Email: ${formData.email || 'Not provided'}
 Phone: ${formData.phone || 'Not provided'}
 
@@ -365,36 +365,60 @@ ${formData.message || ''}
 
 ---
 This message was sent from the 1997 Porsche 911 Carrera 4S contact form`;
-        
-        const mailtoLink = `mailto:u4theD@proton.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-        
-        // Show success message after a short delay
-        setTimeout(() => {
-            // Hide the modal and form
-            modal.style.display = 'none';
-            document.getElementById('form-container').style.display = 'none';
             
-            // Show success message with animation
-            const successMessage = document.getElementById('success-message');
-            successMessage.classList.add('active');
+            // Create mailto link with proper encoding
+            const mailtoLink = `mailto:u4theD@proton.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             
-            // Prevent scrolling when modal is open
-            document.body.style.overflow = 'hidden';
+            // Open the default email client
+            const emailWindow = window.open('', '_blank');
+            if (emailWindow) {
+                emailWindow.location.href = mailtoLink;
+            } else {
+                // Fallback method if popup is blocked
+                window.location.href = mailtoLink;
+            }
             
-            // Reset form
-            form.reset();
+            // Show success message after a short delay
+            setTimeout(() => {
+                try {
+                    // Hide the modal and form
+                    if (modal) modal.style.display = 'none';
+                    const formContainer = document.getElementById('form-container');
+                    if (formContainer) formContainer.style.display = 'none';
+                    
+                    // Show success message with animation
+                    const successMessage = document.getElementById('success-message');
+                    if (successMessage) {
+                        successMessage.classList.add('active');
+                        
+                        // Focus on the "Send Another" button for better keyboard navigation
+                        const sendAnotherBtn = document.getElementById('send-another');
+                        if (sendAnotherBtn) sendAnotherBtn.focus();
+                    }
+                    
+                    // Prevent scrolling when modal is open
+                    document.body.style.overflow = 'hidden';
+                    
+                    // Reset form
+                    if (form) form.reset();
+                    
+                    // Re-enable the submit button
+                    if (submitButton) {
+                        submitButton.disabled = false;
+                        if (buttonText) buttonText.textContent = 'Send Message';
+                        if (buttonLoading) buttonLoading.style.display = 'none';
+                    }
+                } catch (e) {
+                    console.error('Error in success handler:', e);
+                }
+            }, 500);
             
-            // Re-enable the submit button
-            submitButton.disabled = false;
-            buttonText.textContent = 'Send Message';
-            buttonLoading.style.display = 'none';
-            
-            // Focus on the "Send Another" button for better keyboard navigation
-            document.getElementById('send-another').focus();
-        }, 500);
-        
-        // Prevent form from actually submitting
-        return false;
+            return false;
+        } catch (error) {
+            console.error('Error sending email:', error);
+            alert('Error preparing email. Please try again or contact us directly at u4theD@proton.me');
+            return false;
+        }
     }
 
     // Handle form submission
