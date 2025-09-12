@@ -242,116 +242,34 @@ function closeModal(modal) {
     document.body.style.overflow = 'auto';
 }
 
-// Open PDF in a modal
+// Open PDF in the native browser viewer
 function openPdfViewer(pdfPath, title) {
-    console.log('Opening PDF:', pdfPath); // Debug log
+    console.log('openPdfViewer called with:', { pdfPath, title });
     
-    // Ensure the path is correct
+    // Check if we have a valid path
     if (!pdfPath) {
         console.error('No PDF path provided');
         return;
     }
     
-    // Remove any leading slash to prevent double slashes
-    const cleanPath = pdfPath.replace(/^\//, '');
-    
-    // Create or get the modal
-    let modal = document.getElementById('pdfModal');
-    
-    // If modal doesn't exist, create it
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'pdfModal';
-        modal.className = 'modal';
-        
-        const modalContent = document.createElement('div');
-        modalContent.className = 'modal-content';
-        
-        const closeBtn = document.createElement('span');
-        closeBtn.className = 'close close-pdf';
-        closeBtn.innerHTML = '&times;';
-        closeBtn.onclick = closePdfModal;
-        
-        const titleElement = document.createElement('h2');
-        titleElement.textContent = title;
-        titleElement.style.marginBottom = '10px';
-        
-        const iframe = document.createElement('iframe');
-        iframe.id = 'pdfViewer';
-        iframe.setAttribute('frameborder', '0');
-        iframe.setAttribute('title', 'PDF Viewer');
-        iframe.style.width = '100%';
-        iframe.style.height = '80vh';
-        
-        // Build the modal structure first
-        modalContent.appendChild(closeBtn);
-        modalContent.appendChild(titleElement);
-        modalContent.appendChild(iframe);
-        modal.appendChild(modalContent);
-        document.body.appendChild(modal);
-        
-        // Add click outside to close
-        modal.addEventListener('click', function modalClickHandler(event) {
-            if (event.target === modal) {
-                closePdfModal();
-            }
-        });
-        
-        // Set the iframe source after the modal is in the DOM
-        const googleDocsViewerUrl = `https://docs.google.com/viewer?url=${window.location.origin}/${encodeURIComponent(cleanPath)}&embedded=true`;
-        console.log('Google Docs URL:', googleDocsViewerUrl); // Debug log
-        iframe.src = googleDocsViewerUrl;
-    } else {
-        // Update existing modal
-        const iframe = document.getElementById('pdfViewer');
-        const titleElement = modal.querySelector('h2');
-        
-        if (iframe) {
-            const googleDocsViewerUrl = `https://docs.google.com/viewer?url=${window.location.origin}/${encodeURIComponent(cleanPath)}&embedded=true`;
-            console.log('Updating PDF URL:', googleDocsViewerUrl); // Debug log
-            iframe.src = googleDocsViewerUrl;
-        }
-        
-        if (titleElement) {
-            titleElement.textContent = title;
+    // Create a full URL if it's a relative path
+    let fullPdfUrl = pdfPath;
+    if (!pdfPath.startsWith('http') && !pdfPath.startsWith('blob:')) {
+        // Handle local file paths
+        if (pdfPath.startsWith('/')) {
+            // Absolute path
+            fullPdfUrl = window.location.origin + pdfPath;
+        } else {
+            // Relative path
+            const basePath = window.location.href.split('/').slice(0, -1).join('/');
+            fullPdfUrl = `${basePath}/${pdfPath}`.replace(/([^:]\/)\/+/g, '$1');
         }
     }
     
-    // Show the modal
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
+    console.log('Opening PDF:', fullPdfUrl);
     
-    // Add escape key to close
-    const handleKeyDown = function(e) {
-        if (e.key === 'Escape') {
-            closePdfModal();
-        }
-    };
-    
-    // Remove any existing keydown listeners to prevent duplicates
-    modal._keyDownHandler = handleKeyDown;
-    document.addEventListener('keydown', handleKeyDown);
-}
-
-// Close PDF modal
-function closePdfModal() {
-    const modal = document.getElementById('pdfModal');
-    if (modal) {
-        // Remove the keydown event listener
-        if (modal._keyDownHandler) {
-            document.removeEventListener('keydown', modal._keyDownHandler);
-            delete modal._keyDownHandler;
-        }
-        
-        // Hide the modal with animation
-        modal.style.opacity = '0';
-        setTimeout(() => {
-            modal.style.display = 'none';
-        }, 300);
-        
-        // Restore body scrolling
-        document.body.style.overflow = 'auto';
-    }
+    // Open in a new tab with our native PDF viewer
+    window.open(`pdf-native.html?file=${encodeURIComponent(fullPdfUrl)}`, '_blank');
 }
 
 // Initialize animations
