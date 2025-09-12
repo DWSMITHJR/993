@@ -3,41 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Viewer Test</title>
+    <title>Test PDF Loading</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+        }
+        .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
         }
         iframe {
             width: 100%;
             height: 800px;
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
             margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>PDF Viewer Test</h1>
-    <p>Testing PDF viewer with Google Docs Viewer:</p>
-    
-    <h2>Method 1: Direct Link</h2>
-    <a href="images/inside/window.pdf" target="_blank">Open PDF Directly</a>
-    
-    <h2>Method 2: Google Docs Viewer</h2>
-    <a href="https://docs.google.com/viewer?url=https://donaldsmithjr.github.io/993/images/inside/window.pdf" target="_blank">Open with Google Docs Viewer</a>
-    
-    <h2>Method 3: Embedded Viewer</h2>
-    <iframe src="https://docs.google.com/viewer?url=https://donaldsmithjr.github.io/993/images/inside/window.pdf&embedded=true" 
-            frameborder="0" 
-            allowfullscreen>
-    </iframe>
-    
-    <h2>Method 4: HTML5 Object</h2>
-    <object data="images/inside/window.pdf" type="application/pdf" width="100%" height="800px">
-        <p>Unable to display PDF file. <a href="images/inside/window.pdf">Download</a> instead.</p>
-    </object>
+    <div class="container">
+        <h1>PDF Loading Test</h1>
+        
+        <h2>Test 1: Direct Link</h2>
+        <p><a href="./images/inside/window.pdf" target="_blank">Open PDF in new tab</a></p>
+        
+        <h2>Test 2: Object Tag</h2>
+        <object data="./images/inside/window.pdf" type="application/pdf" width="100%" height="800px">
+            <p>Your browser doesn't support embedded PDFs. <a href="./images/inside/window.pdf">Download the PDF</a> instead.</p>
+        </object>
+        
+        <h2>Test 3: Iframe</h2>
+        <iframe src="./images/inside/window.pdf" frameborder="0">
+            <p>Your browser doesn't support iframes. <a href="./images/inside/window.pdf">Download the PDF</a> instead.</p>
+        </iframe>
+        
+        <h2>Test 4: Google Docs Viewer</h2>
+        <iframe src="https://docs.google.com/viewer?url=https://donaldsmithjr.github.io/993/images/inside/window.pdf&embedded=true" 
+                style="width:100%; height:800px;" frameborder="0">
+            Your browser doesn't support iframes.
+        </iframe>
+    </div>
 </body>
 </html>

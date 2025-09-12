@@ -1,0 +1,14 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Set the default MIME type for PDF files
+<IfModule mod_mime.c>
+    AddType application/pdf .pdf
+</IfModule>
+
+# Enable CORS for PDF files
+<IfModule mod_headers.c>
+    <FilesMatch "\.pdf$">
+        Header set Access-Control-Allow-Origin "*"
+    </FilesMatch>
+</IfModule>
