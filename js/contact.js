@@ -367,7 +367,7 @@ ${formData.message || ''}
 This message was sent from the 1997 Porsche 911 Carrera 4S contact form`;
             
             // Create mailto link with proper encoding
-            const mailtoLink = `mailto:u4theD@proton.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            const mailtoLink = `mailto:donald@donaldwsmithjr.com?cc=u4theD@proton.me&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
             
             // Open the default email client
             const emailWindow = window.open('', '_blank');
