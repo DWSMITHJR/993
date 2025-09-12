@@ -242,7 +242,7 @@ function closeModal(modal) {
     document.body.style.overflow = 'auto';
 }
 
-// Open PDF in the native browser viewer
+// Open PDF in the browser's native viewer
 function openPdfViewer(pdfPath, title) {
     console.log('openPdfViewer called with:', { pdfPath, title });
     
@@ -273,8 +273,12 @@ function openPdfViewer(pdfPath, title) {
     
     console.log('Opening PDF:', fullPdfUrl);
     
-    // Open in a new tab with our native PDF viewer
-    window.open(`pdf-native.html?file=${encodeURIComponent(fullPdfUrl)}`, '_blank');
+    // Open the PDF directly in a new tab - let the browser handle it natively
+    // This is more reliable than using an iframe or custom viewer
+    window.open(fullPdfUrl, '_blank');
+    
+    // Optional: Fallback to the custom viewer if needed
+    // window.open(`pdf-native.html?file=${encodeURIComponent(fullPdfUrl)}`, '_blank');
 }
 
 // Initialize animations
