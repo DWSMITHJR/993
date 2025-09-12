@@ -11,14 +11,20 @@ class PdfViewer {
         this.options = {
             container: document.body,
             canvasId: 'pdf-canvas',
-            loadingId: 'pdf-loading',
-            errorId: 'pdf-error',
+            loadingId: 'loading',
+            errorId: 'error',
             prevButtonId: 'prev-page',
             nextButtonId: 'next-page',
             pageNumId: 'page-num',
             pageCountId: 'page-count',
+            zoomLevelId: 'zoom-level',
+            zoomInId: 'zoom-in',
+            zoomOutId: 'zoom-out',
             pdfUrl: '',
             scale: 1.5,
+            maxScale: 3.0,
+            minScale: 0.5,
+            scaleStep: 0.25,
             ...options
         };
         
@@ -27,6 +33,8 @@ class PdfViewer {
         this.pageNum = 1;
         this.pageRendering = false;
         this.pageNumPending = null;
+        this.scale = this.options.scale;
+        this.isLocalFile = false;
         
         // Initialize the viewer
         this.init();
@@ -47,6 +55,37 @@ class PdfViewer {
         this.nextBtn = document.getElementById(this.options.nextButtonId);
         this.pageNumEl = document.getElementById(this.options.pageNumId);
         this.pageCountEl = document.getElementById(this.options.pageCountId);
+        this.zoomLevelEl = document.getElementById(this.options.zoomLevelId);
+        
+        // Initialize zoom controls
+        const zoomInBtn = document.getElementById(this.options.zoomInId);
+        const zoomOutBtn = document.getElementById(this.options.zoomOutId);
+        
+        if (zoomInBtn) zoomInBtn.addEventListener('click', () => this.zoomIn());
+        if (zoomOutBtn) zoomOutBtn.addEventListener('click', () => this.zoomOut());
+        
+        // Initialize zoom level display
+        this.updateZoomLevel();
+        
+        // Handle keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                this.nextPage();
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                this.prevPage();
+            } else if (e.key === '+' && e.ctrlKey) {
+                e.preventDefault();
+                this.zoomIn();
+            } else if (e.key === '-' && e.ctrlKey) {
+                e.preventDefault();
+                this.zoomOut();
+            } else if (e.key === '0' && e.ctrlKey) {
+                e.preventDefault();
+                this.scale = 1.0;
+                this.updateZoomLevel();
+                this.queueRenderPage(this.pageNum);
+            }
+        });
         
         // Set up event listeners
         this.setupEventListeners();
@@ -157,6 +196,105 @@ class PdfViewer {
     }
 
     /**
+     * Check if URL is a local file
+     * @param {string} url - URL to check
+     * @returns {boolean}
+     */
+    isLocalFileUrl(url) {
+        return url.startsWith('file:') || 
+               url.startsWith('blob:') ||
+               (url.startsWith(window.location.origin) && url.includes('/images/'));
+    }
+
+    /**
+     * Open PDF in browser's built-in viewer
+     * @param {string} url - URL of the PDF to open
+     */
+    openInBrowserViewer(url) {
+        this.isLocalFile = true;
+        
+        // For local files, we need to create an object URL
+        const pdfUrl = url.startsWith('blob:') ? url : 
+                      (url.startsWith('file:') ? url : 
+                      URL.createObjectURL(new Blob([url], { type: 'application/pdf' })));
+        
+        // Update UI for local file
+        this.updateUIForLocalFile();
+        
+        // Open in new tab with browser's built-in viewer
+        window.open(pdfUrl, '_blank');
+        
+        // Clean up object URL if we created one
+        if (pdfUrl !== url) {
+            URL.revokeObjectURL(pdfUrl);
+        }
+    }
+
+    /**
+     * Update UI when a local file is detected
+     */
+    updateUIForLocalFile() {
+        const container = document.querySelector('.pdf-container');
+        if (container) {
+            container.innerHTML = `
+                <div class="local-file-message">
+                    <i class="fas fa-external-link-alt"></i>
+                    <h3>Opening in Default PDF Viewer</h3>
+                    <p>This PDF is being opened in your default PDF viewer application.</p>
+                    <p>If it doesn't open automatically, please check your browser settings or download the file directly.</p>
+                    <button id="download-pdf" class="btn">
+                        <i class="fas fa-download"></i> Download PDF
+                    </button>
+                </div>
+            `;
+            
+            // Add download button event listener
+            const downloadBtn = document.getElementById('download-pdf');
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', () => {
+                    const link = document.createElement('a');
+                    link.href = this.options.pdfUrl;
+                    link.download = this.options.pdfUrl.split('/').pop() || 'document.pdf';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+            }
+        }
+    }
+
+    /**
+     * Handle zoom in
+     */
+    zoomIn() {
+        if (this.scale < this.options.maxScale) {
+            this.scale += this.options.scaleStep;
+            this.updateZoomLevel();
+            this.queueRenderPage(this.pageNum);
+        }
+    }
+
+    /**
+     * Handle zoom out
+     */
+    zoomOut() {
+        if (this.scale > this.options.minScale) {
+            this.scale -= this.options.scaleStep;
+            this.updateZoomLevel();
+            this.queueRenderPage(this.pageNum);
+        }
+    }
+
+    /**
+     * Update zoom level display
+     */
+    updateZoomLevel() {
+        if (this.zoomLevelEl) {
+            this.zoomLevelEl.textContent = `${Math.round(this.scale * 100)}%`;
+        }
+    }
+
+    /**
      * Load a PDF from a URL or file object
      * @param {string|File} source - URL or file object of the PDF to load
      */
@@ -168,7 +306,10 @@ class PdfViewer {
             // If source is a file object, create object URL
             const pdfUrl = source instanceof File ? URL.createObjectURL(source) : source;
             
-            // For local files, always use browser's built-in viewer
+            // Store the URL for later use
+            this.options.pdfUrl = pdfUrl;
+            
+            // Check if this is a local file
             if (this.isLocalFileUrl(pdfUrl)) {
                 this.openInBrowserViewer(pdfUrl);
                 return;
@@ -186,13 +327,8 @@ class PdfViewer {
             
             // Update UI
             this.updatePageCount(this.pdfDoc.numPages);
-            this.currentPage = 1;
-            await this.renderPage(this.currentPage);
-            
-            // Clean up object URL if we created one
-            if (source instanceof File) {
-                URL.revokeObjectURL(pdfUrl);
-            }
+            this.pageNum = 1;
+            await this.renderPage(this.pageNum);
             
         } catch (error) {
             console.error('Error loading PDF:', error);
@@ -204,6 +340,11 @@ class PdfViewer {
             }
         } finally {
             this.hideLoading();
+            
+            // Clean up object URL if we created one
+            if (source instanceof File) {
+                URL.revokeObjectURL(pdfUrl);
+            }
         }
     }
     

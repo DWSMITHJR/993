@@ -2040,6 +2040,39 @@ footer {
     border: none;
     display: block;
 }
+/* Terms and Privacy Pages */
+.terms-container, .privacy-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    line-height: 1.8;
+}
+
+.terms-page {
+    padding-top: 20px;
+    margin-top: 0;
+}
+
+.contact-link {
+    margin: 1.5rem 0;
+    font-size: 1.1rem;
+}
+
+.contact-link a {
+    color: #d4af37;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.contact-link a:hover {
+    color: #b38f2a;
+    text-decoration: underline;
+}
+
 /* Close button styles consolidated above */
 
 #pdfViewer {

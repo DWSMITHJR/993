@@ -1,17 +1,25 @@
 /* PDF Viewer Styles */
 :root {
-    --primary-color: #1976d2;
-    --primary-hover: #1565c0;
+    --primary-color: #d4af37; /* Porsche gold */
+    --primary-hover: #b38f2a;
     --error-color: #d32f2f;
     --success-color: #388e3c;
     --background-light: #f5f5f5;
-    --border-color: #ddd;
+    --border-color: #e0e0e0;
     --text-color: #333;
     --text-muted: #666;
     --white: #ffffff;
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --black: #000000;
+    --gray-light: #f8f9fa;
+    --gray: #6c757d;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
-    --transition: all 0.2s ease-in-out;
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+    --border-radius: 4px;
+    --header-height: 60px;
+    --footer-height: 50px;
+    --toolbar-height: 50px;
 }
 
 /* Base Styles */
@@ -38,6 +46,8 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
+    background-color: var(--white);
+    padding-top: var(--header-height);
 }
 
 .app-header {
@@ -48,6 +58,14 @@ body {
     justify-content: space-between;
     align-items: center;
     flex-shrink: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+    z-index: 1000;
+    background-color: var(--black);
+    color: var(--white);
 }
 
 .app-header h1 {
@@ -66,9 +84,11 @@ body {
     flex-direction: column;
     background-color: var(--white);
     margin: 1rem;
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     box-shadow: var(--shadow-md);
     overflow: hidden;
+    margin-top: calc(var(--header-height) + 1rem);
+    margin-bottom: calc(var(--footer-height) + 1rem);
 }
 
 .toolbar {
@@ -82,16 +102,29 @@ body {
 }
 
 .page-info {
-    margin: 0 1rem;
     font-size: 0.9rem;
-    color: var(--text-muted);
-    min-width: 120px;
-    text-align: center;
+    color: var(--white);
+    margin: 0 1rem;
+    font-weight: 500;
+    white-space: nowrap;
 }
 
 .zoom-controls {
-    margin-left: auto;
     display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+}
+
+#zoom-level {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--white);
+    min-width: 50px;
+    text-align: center;
     align-items: center;
     gap: 0.5rem;
 }
@@ -105,6 +138,53 @@ body {
     justify-content: center;
     align-items: flex-start;
     padding: 2rem;
+    min-height: calc(100vh - var(--header-height) - var(--footer-height) - var(--toolbar-height) - 4rem);
+}
+
+/* Local file message */
+.local-file-message {
+    max-width: 500px;
+    margin: 4rem auto;
+    padding: 2rem;
+    background-color: var(--white);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+
+.local-file-message i {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.local-file-message h3 {
+    color: var(--black);
+    margin-bottom: 1rem;
+}
+
+.local-file-message p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.local-file-message .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: var(--primary-color);
+    color: var(--black);
+    font-weight: 500;
+    padding: 0.6rem 1.5rem;
+    border-radius: 30px;
+    transition: var(--transition);
+}
+
+.local-file-message .btn:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
 }
 
 #pdf-canvas {
@@ -214,15 +294,78 @@ body {
 
 /* Footer */
 .app-footer {
-    background-color: var(--white);
+    background-color: var(--black);
     padding: 0.75rem 2rem;
-    border-top: 1px solid var(--border-color);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
     font-size: 0.85rem;
-    color: var(--text-muted);
+    color: var(--gray);
     flex-shrink: 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--footer-height);
+    z-index: 900;
+}
+
+.app-footer .file-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.app-footer #file-name {
+    font-weight: 500;
+    color: var(--white);
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.app-footer #file-size {
+    font-size: 0.8em;
+    opacity: 0.8;
+}
+
+.app-footer .status-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.app-footer #status {
+    font-style: italic;
+    color: var(--white);
+}
+
+.keyboard-shortcuts {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.keyboard-shortcuts .shortcut {
+    position: relative;
+    padding-left: 1.5rem;
+    color: var(--gray);
+}
+
+.keyboard-shortcuts .shortcut:before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 16px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.keyboard-shortcuts .shortcut:first-child:before {
+    display: none;
 }
 
 .file-info {
@@ -254,10 +397,76 @@ body {
 }
 
 /* Drag and Drop */
+/* Drag and drop styles */
 .drag-over {
     outline: 2px dashed var(--primary-color);
     outline-offset: -10px;
-    background-color: rgba(25, 118, 210, 0.05) !important;
+    background-color: rgba(212, 175, 55, 0.05) !important;
+    position: relative;
+}
+
+.drag-over:after {
+    content: 'Drop PDF file here';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--primary-color);
+    color: var(--black);
+    padding: 1rem 2rem;
+    border-radius: 4px;
+    font-weight: 500;
+    pointer-events: none;
+    z-index: 1000;
+    box-shadow: var(--shadow-lg);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .toolbar {
+        padding: 0.5rem 1rem;
+        gap: 0.75rem;
+    }
+    
+    .page-info {
+        display: none;
+    }
+    
+    .app-footer {
+        flex-direction: column;
+        height: auto;
+        padding: 0.75rem 1rem;
+        text-align: center;
+        gap: 0.5rem;
+    }
+    
+    .app-footer .status-info {
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .keyboard-shortcuts {
+        display: none;
+    }
+}
+
+/* Print styles */
+@media print {
+    .app-header,
+    .toolbar,
+    .app-footer {
+        display: none !important;
+    }
+    
+    .pdf-container {
+        padding: 0;
+    }
+    
+    canvas {
+        max-width: 100% !important;
+        height: auto !important;
+    }
 }
 
 /* Responsive Design */
