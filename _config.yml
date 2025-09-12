@@ -1,0 +1,31 @@
+# Jekyll configuration
+include:
+  - images
+  - images/inside
+  - images/outside
+
+exclude:
+  - .github
+  - .git
+  - .gitignore
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+
+# Enable/disable Jekyll processing
+automated: false
+
+# Set default MIME types
+timezone: America/New_York
+
+# Build settings
+markdown: kramdown
+plugins:
+  - jekyll-feed
+
+# Exclude from processing
+exclude_from_localization: ["images"]
+
+# Set default file encoding
+encoding: utf-8
