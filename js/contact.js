@@ -359,71 +359,143 @@ document.addEventListener('DOMContentLoaded', function() {
             const subject = `Inquiry about 1997 Porsche 911 Carrera 4S - ${formData.subject || 'General Inquiry'}`;
             const body = `Name: ${formData.name || 'Not provided'}
 Email: ${formData.email || 'Not provided'}
-Phone: ${formData.phone || 'Not provided'}
-
-${formData.message || ''}
-
----
-This message was sent from the 1997 Porsche 911 Carrera 4S contact form`;
             
-            // Create mailto link with proper encoding
-            const mailtoLink = `mailto:donald@donaldwsmithjr.com?cc=u4theD@proton.me&subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            // Create a unique ID for this email session
+            const emailId = 'email-' + Date.now();
             
-            // Open the default email client directly
-            // Using window.location.href is more reliable than window.open for mailto links
-            window.location.href = mailtoLink;
+            // Create a form element to submit the mailto link
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `mailto:donald@donaldwsmithjr.com?cc=u4theD@proton.me&subject=${encodeURIComponent(subject)}&body=${emailBody}`;
             
-            // Show success message after a short delay
-            setTimeout(() => {
-                try {
-                    
-                    closeModalFunc();
-                    
-                    // Show success message
-                    const successMessage = document.getElementById('success-message');
-                    if (successMessage) {
-                        successMessage.style.display = 'block';
-                        
-                        // Hide success message after 5 seconds
-                        setTimeout(() => {
-                            successMessage.style.display = 'none';
-                            
-                            // Reset the form
-                            form.reset();
-                            
-                            // Scroll to top
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                            
-                            resolve();
-                        }, 5000);
-                    } else {
-                        resolve();
-                    }
+            // Update the display
+            if (input.tagName === 'TEXTAREA') {
+                valueDisplay.innerHTML = input.value.replace(/\n/g, '<br>');
+            } else if (input.tagName === 'SELECT') {
+                valueDisplay.textContent = input.options[input.selectedIndex].text;
+            } else {
+                valueDisplay.textContent = input.value || 'Not provided';
+            }
+            
+            // Update the original form field
+            const formField = form.querySelector(`[name="${fieldName}"]`);
+            if (formField) {
+                if (formField.tagName === 'SELECT') {
+                    formField.value = input.value;
+                } else {
+                    formField.value = input.value;
                 }
-            }, 100);
+            }
             
-            // Clean up in case the user navigates away
-            window.addEventListener('beforeunload', function cleanup() {
-                clearInterval(checkWindow);
-                clearTimeout(timeout);
-                window.removeEventListener('beforeunload', cleanup);
-                resolve();
-            });
+            // Toggle back to display mode
+            display.style.display = 'flex';
+            edit.style.display = 'none';
         });
-    }
+    });
+    
+    // Cancel edit
+    document.querySelectorAll('.cancel-edit').forEach(button => {
+        button.addEventListener('click', function() {
+            const fieldWrapper = this.closest('.editable-field');
+            const display = fieldWrapper.querySelector('.field-display');
+            const edit = fieldWrapper.querySelector('.field-edit');
+            
+            display.style.display = 'flex';
+            edit.style.display = 'none';
+        });
+    });
+    
+    // Handle Enter key in edit fields
+    document.querySelectorAll('.field-edit input, .field-edit textarea').forEach(input => {
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const saveBtn = this.closest('.field-edit').querySelector('.save-edit');
+                if (saveBtn) saveBtn.click();
+            }
+        });
+    });
+}
 
-    // Handle form submission
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        // Validate form
-        if (!validateForm()) {
-            return;
-        }
-        
-        // Disable submit button
-        const submitButton = form.querySelector('button[type="submit"]');
-        const buttonText = submitButton.querySelector('.button-text');
+// Format form data for email
+function formatFormDataForEmail(formData) {
+    let emailBody = "New Inquiry from Porsche 911 Carrera 4S Website\n\n";
+    
+    // Add all form fields to email body
+    emailBody += `Name: ${formData.get('name') || 'Not provided'}\n`;
+    emailBody += `Email: ${formData.get('email') || 'Not provided'}\n`;
+    emailBody += `Phone: ${formData.get('phone') || 'Not provided'}\n`;
+    emailBody += `Inquiry Type: ${formData.get('subject') || 'Not specified'}\n\n`;
+    emailBody += `Message:\n${formData.get('message') || 'No message provided'}\n\n`;
+    
+    // Add timestamp
+    emailBody += `\n---\n`;
+    emailBody += `Sent on: ${new Date().toLocaleString()}\n`;
+    emailBody += `User Agent: ${navigator.userAgent}`;
+    
+    return emailBody;
+}
+
+// Format form data for display in preview
+function formatFormDataForPreview(formData) {
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
+    return data;
+}
+
+// Update the preview content
+function updatePreviewContent(formData) {
+    const previewContent = document.getElementById('preview-content');
+    if (!previewContent) return;
+    
+    const previewHTML = `
+        <div class="preview-section">
+            <h4>Contact Information</h4>
+            <p><strong>Name:</strong> ${formData.name || 'Not provided'}</p>
+            <p><strong>Email:</strong> ${formData.email || 'Not provided'}</p>
+            <p><strong>Phone:</strong> ${formData.phone || 'Not provided'}</p>
+            <p><strong>Inquiry Type:</strong> ${formData.subject || 'Not specified'}</p>
+        </div>
+        <div class="preview-section">
+            <h4>Message</h4>
+            <p>${formData.message.replace(/\n/g, '<br>') || 'No message provided'}</p>
+        </div>
+    `;
+    
+    previewContent.innerHTML = previewHTML;
+    
+    // Set up event listeners for the modal buttons
+    const editButton = document.getElementById('edit-preview');
+    const sendButton = document.getElementById('confirm-send');
+    
+    if (editButton) {
+        editButton.onclick = function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        };
+    }
+    
+    if (sendButton) {
+        sendButton.onclick = function() {
+            sendEmail(formData);
+        };
+    }
+}
+
+// Import the email service
+import { emailService } from './email-service.js';
+
+// Send email using the email service
+async function sendEmail(formData) {
+    try {
+        // Show loading state
+        const submitButton = document.querySelector('button[type="submit"]');
+        const originalText = submitButton.innerHTML;
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            }, 1000);
         const buttonLoading = submitButton.querySelector('.button-loading');
         
         try {
