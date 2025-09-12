@@ -81,41 +81,70 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Initialize modal functionality
-    const modal = document.getElementById('modal');
-    if (modal) {
-        const modalImg = document.getElementById('modal-image');
-        
-        // Click on main image to open modal
-        const galleryMain = document.querySelector('.gallery-main');
-        if (galleryMain) {
-            galleryMain.addEventListener('click', function(e) {
-                // Don't trigger modal if clicking on the zoom button
-                if (e.target.closest('.image-zoom')) return;
+    // Initialize image modal functionality
+    const modal = document.getElementById('image-modal');
+    const modalImg = document.getElementById('modal-image');
+    const modalCaption = document.querySelector('.modal-caption');
+    
+    if (modal && modalImg) {
+        // Click on thumbnails to open modal
+        document.querySelectorAll('.thumbnail:not(.pdf-thumbnail)').forEach(thumb => {
+            thumb.addEventListener('click', function(e) {
+                e.preventDefault();
+                const imgSrc = this.getAttribute('data-full') || this.getAttribute('src');
+                const caption = this.getAttribute('data-caption') || this.getAttribute('alt') || '';
                 
-                modal.style.display = 'flex';
-                setTimeout(() => {
-                    modal.style.opacity = '1';
-                }, 10);
-                modalImg.src = mainImage.src;
-                document.body.style.overflow = 'hidden';
+                if (imgSrc) {
+                    modalImg.src = imgSrc;
+                    modalCaption.textContent = caption;
+                    
+                    // Show modal with animation
+                    modal.style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                    
+                    // Add active class after a short delay for smooth transition
+                    setTimeout(() => {
+                        modal.classList.add('active');
+                    }, 10);
+                }
             });
-        }
+        });
         
-        // Close modal
-        const closeBtn = document.querySelector('.close');
+        // Close modal when clicking the close button
+        const closeBtn = modal.querySelector('.close');
         if (closeBtn) {
             closeBtn.addEventListener('click', function() {
-                closeModal(modal);
+                closeImageModal();
             });
         }
         
         // Close modal when clicking outside the image
         modal.addEventListener('click', function(e) {
             if (e.target === modal) {
-                closeModal(modal);
+                closeImageModal();
             }
         });
+        
+        // Close with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('active')) {
+                closeImageModal();
+            }
+        });
+    }
+    
+    // Function to close the image modal
+    function closeImageModal() {
+        const modal = document.getElementById('image-modal');
+        if (modal) {
+            modal.classList.remove('active');
+            
+            // Wait for the fade-out animation to complete before hiding
+            setTimeout(() => {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }, 300);
+        }
     }
     
     // Initialize animations
@@ -270,15 +299,20 @@ function openPdfViewer(pdfPath, title) {
             fullPdfUrl = cleanPath;
         }
     }
-    
+
     console.log('Opening PDF:', fullPdfUrl);
-    
-    // Open the PDF directly in a new tab - let the browser handle it natively
-    // This is more reliable than using an iframe or custom viewer
-    window.open(fullPdfUrl, '_blank');
-    
-    // Optional: Fallback to the custom viewer if needed
-    // window.open(`pdf-native.html?file=${encodeURIComponent(fullPdfUrl)}`, '_blank');
+
+    // Calculate 80% of screen dimensions
+    const width = Math.floor(window.screen.availWidth * 0.8);
+    const height = Math.floor(window.screen.availHeight * 0.8);
+
+    // Center the window on the screen
+    const left = Math.floor((window.screen.availWidth - width) / 2);
+    const top = Math.floor((window.screen.availHeight - height) / 2);
+
+    // Open in a new window sized to 80% of screen
+    const features = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`;
+    window.open(fullPdfUrl, '_blank', features);
 }
 
 // Initialize animations
