@@ -376,68 +376,97 @@ This message was sent from the 1997 Porsche 911 Carrera 4S contact form`;
             // Show success message after a short delay
             setTimeout(() => {
                 try {
-                    // Hide the modal and form
-                    if (modal) modal.style.display = 'none';
-                    const formContainer = document.getElementById('form-container');
-                    if (formContainer) formContainer.style.display = 'none';
                     
-                    // Show success message with animation
+                    closeModalFunc();
+                    
+                    // Show success message
                     const successMessage = document.getElementById('success-message');
                     if (successMessage) {
-                        successMessage.classList.add('active');
+                        successMessage.style.display = 'block';
                         
-                        // Focus on the "Send Another" button for better keyboard navigation
-                        const sendAnotherBtn = document.getElementById('send-another');
-                        if (sendAnotherBtn) sendAnotherBtn.focus();
+                        // Hide success message after 5 seconds
+                        setTimeout(() => {
+                            successMessage.style.display = 'none';
+                            
+                            // Reset the form
+                            form.reset();
+                            
+                            // Scroll to top
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            
+                            resolve();
+                        }, 5000);
+                    } else {
+                        resolve();
                     }
-                    
-                    // Prevent scrolling when modal is open
-                    document.body.style.overflow = 'hidden';
-                    
-                    // Reset form
-                    if (form) form.reset();
-                    
-                    // Re-enable the submit button
-                    if (submitButton) {
-                        submitButton.disabled = false;
-                        if (buttonText) buttonText.textContent = 'Send Message';
-                        if (buttonLoading) buttonLoading.style.display = 'none';
-                    }
-                } catch (e) {
-                    console.error('Error in success handler:', e);
                 }
-            }, 500);
+            }, 100);
             
-            return false;
-        } catch (error) {
-            console.error('Error sending email:', error);
-            alert('Error preparing email. Please try again or contact us directly at u4theD@proton.me');
-            return false;
-        }
+            // Clean up in case the user navigates away
+            window.addEventListener('beforeunload', function cleanup() {
+                clearInterval(checkWindow);
+                clearTimeout(timeout);
+                window.removeEventListener('beforeunload', cleanup);
+                resolve();
+            });
+        });
     }
 
     // Handle form submission
-    form.addEventListener('submit', function(e) {
+    form.addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        // First, trigger HTML5 validation
-        if (!form.checkValidity()) {
-            // If HTML5 validation fails, trigger our custom validation
-            if (!validateForm()) {
-                return false;
-            }
+        // Validate form
+        if (!validateForm()) {
+            return;
         }
         
-        // Get form data
-        const formData = new FormData(form);
-        const formDataObj = formatFormDataForPreview(formData);
+        // Disable submit button
+        const submitButton = form.querySelector('button[type="submit"]');
+        const buttonText = submitButton.querySelector('.button-text');
+        const buttonLoading = submitButton.querySelector('.button-loading');
         
-        // Update and show the preview modal
-        updatePreviewContent(formDataObj);
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden';
-        
-        return false;
+        try {
+            if (buttonText && buttonLoading) {
+                buttonText.textContent = 'Sending...';
+                buttonLoading.style.display = 'inline-block';
+                submitButton.disabled = true;
+            }
+            
+            // Show preview modal
+            updateEmailPreview();
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            
+            // Get form data
+            const formData = new FormData(form);
+            
+            // Handle send button click in the modal
+            const sendButton = document.getElementById('send-email');
+            if (sendButton) {
+                // Remove any existing click handlers to prevent duplicates
+                const newSendButton = sendButton.cloneNode(true);
+                sendButton.parentNode.replaceChild(newSendButton, sendButton);
+                
+                newSendButton.addEventListener('click', async () => {
+                    try {
+                        await sendEmail(formData);
+                    } catch (error) {
+                        console.error('Error sending email:', error);
+                    }
+                });
+            }
+            
+        } catch (error) {
+            console.error('Error in form submission:', error);
+        } finally {
+            // Re-enable submit button
+            if (buttonText && buttonLoading) {
+                buttonText.textContent = 'Send Message';
+                buttonLoading.style.display = 'none';
+                submitButton.disabled = false;
+            }
+        }
     });
     
     // Handle "Send Another" button click
