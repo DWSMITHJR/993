@@ -126,36 +126,82 @@ class PdfViewer {
     }
     
     /**
-     * Load a PDF document
-     * @param {string} url - URL of the PDF to load
+     * Check if a URL is a local file
+     * @param {string} url - URL to check
      */
-    async loadPdf(url) {
+    isLocalFileUrl(url) {
+        return url.startsWith('file:') || 
+               url.startsWith('blob:') || 
+               !/^https?:\/\//.test(url);
+    }
+
+    /**
+     * Open PDF in browser's built-in viewer
+     * @param {string} url - URL of the PDF to open
+     */
+    openInBrowserViewer(url) {
+        // For local files, we need to create an object URL
+        const pdfUrl = url.startsWith('blob:') ? url : 
+                      (url.startsWith('file:') ? url : 
+                      URL.createObjectURL(new Blob([url], { type: 'application/pdf' })));
+        
+        // Open in new tab with browser's built-in viewer
+        window.open(pdfUrl, '_blank');
+        
+        // Clean up object URL if we created one
+        if (pdfUrl !== url) {
+            URL.revokeObjectURL(pdfUrl);
+        }
+        
+        return false; // Prevent default behavior
+    }
+
+    /**
+     * Load a PDF from a URL or file object
+     * @param {string|File} source - URL or file object of the PDF to load
+     */
+    async loadPdf(source) {
         try {
             this.showLoading();
-            this.hideError();
+            this.clearError();
             
-            console.log(`Loading PDF from: ${url}`);
+            // If source is a file object, create object URL
+            const pdfUrl = source instanceof File ? URL.createObjectURL(source) : source;
             
-            // Check if PDF exists
-            const pdfExists = await fileUtils.checkFileExists(url);
-            if (!pdfExists) {
-                throw new Error(`PDF not found at: ${url}`);
+            // For local files, always use browser's built-in viewer
+            if (this.isLocalFileUrl(pdfUrl)) {
+                this.openInBrowserViewer(pdfUrl);
+                return;
             }
             
-            // Get PDF.js loading options
-            const loadingOptions = await fileUtils.getPdfLoadingOptions(url);
+            // For remote URLs, use PDF.js
+            const loadingTask = window.pdfjsLib.getDocument({
+                url: pdfUrl,
+                withCredentials: false,
+                cMapUrl: 'https://unpkg.com/pdfjs-dist@3.11.174/cmaps/',
+                cMapPacked: true
+            });
             
-            // Load the PDF
-            const loadingTask = window.pdfjsLib.getDocument(loadingOptions);
             this.pdfDoc = await loadingTask.promise;
             
             // Update UI
-            this.updatePageCount();
-            this.renderPage(1);
+            this.updatePageCount(this.pdfDoc.numPages);
+            this.currentPage = 1;
+            await this.renderPage(this.currentPage);
+            
+            // Clean up object URL if we created one
+            if (source instanceof File) {
+                URL.revokeObjectURL(pdfUrl);
+            }
             
         } catch (error) {
             console.error('Error loading PDF:', error);
-            this.showError(`Error loading PDF: ${error.message}`);
+            this.showError('Error loading PDF: ' + (error.message || 'Unknown error'));
+            
+            // If PDF.js fails, try opening in browser's viewer as fallback
+            if (source && !(source instanceof File)) {
+                this.openInBrowserViewer(source);
+            }
         } finally {
             this.hideLoading();
         }
