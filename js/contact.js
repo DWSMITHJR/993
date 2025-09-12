@@ -361,33 +361,40 @@ Name: ${formData.name || 'Not provided'}
 Email: ${formData.email || 'Not provided'}
 Phone: ${formData.phone || 'Not provided'}
 
-Message:
-${formData.message || 'No message provided'}
+${formData.message || ''}
 
 ---
 This message was sent from the 1997 Porsche 911 Carrera 4S contact form`;
         
-        const mailtoLink = `mailto:phdproton@pm.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        const mailtoLink = `mailto:u4theD@proton.me?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
         
-        // Show the success message
-        const successMessage = document.getElementById('success-message');
-        successMessage.classList.add('visible');
-        
-        // Open the default email client
-        window.open(mailtoLink, '_blank');
-        
-        // Reset the form
-        form.reset();
-        
-        // Hide the modal and show the form container
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto';
-        document.getElementById('form-container').style.display = 'block';
-        
-        // Hide the success message after 60 seconds
+        // Show success message after a short delay
         setTimeout(() => {
-            successMessage.classList.remove('visible');
-        }, 60000);
+            // Hide the modal and form
+            modal.style.display = 'none';
+            document.getElementById('form-container').style.display = 'none';
+            
+            // Show success message with animation
+            const successMessage = document.getElementById('success-message');
+            successMessage.classList.add('active');
+            
+            // Prevent scrolling when modal is open
+            document.body.style.overflow = 'hidden';
+            
+            // Reset form
+            form.reset();
+            
+            // Re-enable the submit button
+            submitButton.disabled = false;
+            buttonText.textContent = 'Send Message';
+            buttonLoading.style.display = 'none';
+            
+            // Focus on the "Send Another" button for better keyboard navigation
+            document.getElementById('send-another').focus();
+        }, 500);
+        
+        // Prevent form from actually submitting
+        return false;
     }
 
     // Handle form submission
@@ -418,14 +425,14 @@ This message was sent from the 1997 Porsche 911 Carrera 4S contact form`;
     document.getElementById('send-another').addEventListener('click', function() {
         // Show the form and hide success message
         document.getElementById('form-container').style.display = 'block';
-        document.getElementById('success-message').style.display = 'none';
+        const successMessage = document.getElementById('success-message');
+        successMessage.classList.remove('active');
         
-        // Clear any form messages
-        const formMessage = document.getElementById('form-message');
-        if (formMessage) {
-            formMessage.textContent = '';
-            formMessage.className = 'form-message';
-        }
+        // Re-enable scrolling
+        document.body.style.overflow = 'auto';
+        
+        // Clear the form
+        form.reset();
     });
     
     // Close modal when clicking outside the content
