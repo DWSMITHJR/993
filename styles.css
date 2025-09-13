@@ -729,11 +729,10 @@ section h2:after {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 40px;
+    width: 50px;
     height: 2px;
-    background: linear-gradient(90deg, var(--accent), var(--secondary));
+    background: var(--accent);
     transition: width 0.3s ease;
-    border-radius: 1px;
 }
 
 .contact-info:hover h2::after, #form-container:hover h3::after {
@@ -749,10 +748,11 @@ section h2:after {
     font-weight: 400;
 }
 
+/* Horizontal Dividers */
 .contact-details {
-    margin: 20px 0 0;
-    padding: 20px 0 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    margin: 25px 0 0;
+    padding: 25px 0 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .contact-details p {
@@ -1209,10 +1209,10 @@ section h2:after {
 
 /* Modal specific styles */
 .modal-body {
-    margin: 20px 0;
-    padding: 20px 0;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
+    margin: 25px 0;
+    padding: 25px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .modal-description {
