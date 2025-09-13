@@ -1,0 +1,24 @@
+/* TEAM */
+  Developer: Donald Smith
+  Website: https://donaldsmithjr.github.io
+  Location: United States
+  Contact: [Available on LinkedIn](https://linkedin.com/in/donaldsmithjr)
+
+/* SITE */
+  Last updated: 2025-02-14
+  Standards: HTML5, CSS3, JavaScript (ES6+)
+  Components: 
+    - Frontend: Vanilla JavaScript, CSS3, HTML5
+    - Backend: Node.js, Express
+    - Build Tools: npm scripts
+  Software: Visual Studio Code, Git, GitHub
+
+/* THANKS */
+  - Google Fonts for typography
+  - Font Awesome for icons
+  - Porsche for the inspiration
+
+/* NOTE */
+  This website was developed as a showcase of technical skills and passion for classic cars.
+  The 1997 Porsche 911 Carrera 4S (993) featured is a personal project demonstrating
+  web development, performance optimization, and responsive design skills.

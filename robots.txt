@@ -1,0 +1,54 @@
+# robots.txt for Donald Smith's Portfolio
+# Last updated: 2025-09-12
+
+# Global rules for all crawlers
+User-agent: *
+Allow: /
+Disallow: /private/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /*?*
+
+# Crawl-delay: 10  # Uncomment if needed to limit crawl rate
+
+# Sitemaps
+Sitemap: https://donaldsmithjr.github.io/993/sitemap.xml
+
+# Specific bot instructions
+User-agent: Googlebot
+Allow: /*.html$
+Allow: /*.css$
+Allow: /*.js$
+
+# Image search bots
+User-agent: Googlebot-Image
+Allow: /images/
+
+# Ad bots
+User-agent: Mediapartners-Google
+Allow: /
+
+# Social media bots
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+# Development and staging environments
+User-agent: *
+Disallow: /staging/
+Disallow: /dev/
+
+# Allow all bots to access humans.txt
+User-agent: *
+Allow: /humans.txt
+Allow: /sitemap.xml
+
+# Host directive (only needed if using multiple domains)
+# Host: donaldsmithjr.github.io
+
+# Clean parameters (example)
+# Clean-param: ref /search/
+# Clean-param: utm_source /

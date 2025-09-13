@@ -1,0 +1,33 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.suo
+*.sln
+*.sw?
+
+# Local development
+.vercel
+.netlify
+
+# Build output
+build/
+
+# Local development
+.cache/
+.temp/
+
+# Image optimization outputs
+/images/**/*_small.*
+/images/**/*_medium.*
+/images/**/*_large.*
+/images/**/*.webp
+
+# Lighthouse reports
+lighthouse-report.*
+
+# Backup files
+backup-*
