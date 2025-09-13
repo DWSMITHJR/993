@@ -156,46 +156,48 @@
         }
         
         .specs-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 30px;
-            margin-bottom: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            margin: 0 auto 40px;
+            max-width: 800px;
         }
         
         .spec-panel {
-            background: rgba(0, 0, 0, 0.9) !important;
-            border: 2px solid #ff0000 !important; /* Red border for visibility */
+            background: rgba(10, 20, 30, 0.7);
+            border: 1px solid rgba(0, 200, 200, 0.3);
             position: relative;
-            overflow: visible !important;
-            z-index: 9999 !important; /* Very high z-index */
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8) !important; /* Red glow */
-            min-height: 200px; /* Ensure minimum height */
+            overflow: hidden;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(0, 200, 200, 0.2);
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 800px;
         }
         
         .spec-panel::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #f0f, transparent);
-            animation: slide 2s linear infinite;
-        }
-        
-        @keyframes slide {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+            animation: sweep 3s infinite;
         }
         
         .spec-header {
-            background: linear-gradient(90deg, #0ff, #f0f);
-            padding: 10px 20px;
-            font-size: 1.2em;
+            background: linear-gradient(90deg, #0aa, #0cc);
+            padding: 14px 20px;
+            font-size: 1.1em;
             font-weight: bold;
             letter-spacing: 3px;
-            color: #000;
+            color: #fff;
             text-transform: uppercase;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 230, 230, 0.5);
+            text-shadow: 0 0 10px rgba(0, 200, 200, 0.5);
         }
         
         .spec-content {
@@ -203,24 +205,24 @@
         }
         
         .spec-link {
-            display: block !important;
-            color: #0ff !important;
-            text-decoration: none !important;
-            font-size: 1.8em !important;
-            text-align: center !important;
-            padding: 25px !important;
-            border: 3px solid #0ff !important;
-            margin: 30px auto !important;
-            transition: all 0.3s ease !important;
-            width: 85% !important;
-            background: rgba(0, 20, 30, 0.8) !important;
-            text-transform: uppercase !important;
-            letter-spacing: 3px !important;
-            font-weight: bold !important;
-            text-shadow: 0 0 10px #0ff !important;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5) !important;
+            display: block;
+            color: #0ff;
+            text-decoration: none;
+            font-size: 1.8em;
+            text-align: center;
+            padding: 25px;
+            border: 3px solid #0ff;
+            margin: 30px auto;
+            transition: all 0.3s ease;
+            width: 85%;
+            background: rgba(0, 20, 30, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: bold;
+            text-shadow: 0 0 10px #0ff;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
             position: relative;
-            z-index: 20 !important;
+            z-index: 20;
         }
         
         .spec-link:hover {
@@ -230,19 +232,12 @@
         }
         
         .spec-item {
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            padding: 20px !important;
-            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
-            transition: all 0.2s;
-            min-height: 80px !important;
-        }
-        
-        .spec-item:hover {
-            background: rgba(0, 255, 255, 0.1);
-            padding-left: 10px;
-            border-color: #f0f;
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(0, 200, 200, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
         }
         
         .spec-item:last-child {
@@ -250,9 +245,9 @@
         }
         
         .spec-key {
-            color: #888;
-            font-size: 0.9em;
-            text-transform: uppercase;
+            color: #a0e0ff;
+            font-weight: normal;
+            letter-spacing: 0.5px;
         }
         
         .spec-val {
@@ -506,14 +501,6 @@
         
         <div class="specs-container">
             <div class="spec-panel">
-                <div class="spec-header">TECHNICAL SPECIFICATIONS</div>
-                <div class="spec-content">
-                    <div class="spec-item">
-                        <a href="data.html" class="spec-link">Data</a>
-                    </div>
-                </div>
-            </div>
-            <div class="spec-panel">
                 <div class="spec-header">ENGINE SPECIFICATIONS</div>
                 <div class="spec-content">
                     <div class="spec-item">
@@ -667,7 +654,7 @@
         </div>
         
         <div class="footer">
-            993 C4S // The Final Air-Cooled Evolution // <a href="data.html" style="color: #0ff; text-decoration: none; border-bottom: 1px solid #0ff; margin: 0 10px;">Data</a> // <a href="contact.html" style="color: #0ff; text-decoration: none; border-bottom: 1px solid #0ff;">Contact</a>
+            993 C4S // The Final Air-Cooled Evolution
         </div>
     </div>
 </body>
