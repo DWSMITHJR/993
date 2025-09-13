@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>993 C4S Technical Specifications</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Courier New', monospace;
+            background: #000;
+            color: #0ff;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 255, 0.03) 2px,
+                    rgba(0, 255, 255, 0.03) 4px
+                ),
+                repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0, 255, 255, 0.03) 2px,
+                    rgba(0, 255, 255, 0.03) 4px
+                );
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.8), transparent);
+            animation: scan 8s linear infinite;
+            z-index: 2;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(100vh); }
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 3;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            position: relative;
+            margin-bottom: 40px;
+        }
+        
+        .title-block {
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1 {
+            font-size: 4em;
+            font-weight: bold;
+            letter-spacing: 8px;
+            background: linear-gradient(45deg, #0ff, #f0f, #0ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.3); }
+        }
+        
+        .model-code {
+            font-size: 1.5em;
+            color: #f0f;
+            letter-spacing: 10px;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            background: #0ff;
+            padding: 2px;
+            margin-bottom: 40px;
+        }
+        
+        .tech-stat {
+            background: #000;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tech-stat::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+            animation: sweep 3s infinite;
+        }
+        
+        @keyframes sweep {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #0ff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);
+        }
+        
+        .stat-label {
+            font-size: 0.8em;
+            color: #f0f;
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .specs-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .spec-panel {
+            background: rgba(0, 0, 0, 0.9) !important;
+            border: 2px solid #ff0000 !important; /* Red border for visibility */
+            position: relative;
+            overflow: visible !important;
+            z-index: 9999 !important; /* Very high z-index */
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8) !important; /* Red glow */
+            min-height: 200px; /* Ensure minimum height */
+        }
+        
+        .spec-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #f0f, transparent);
+            animation: slide 2s linear infinite;
+        }
+        
+        @keyframes slide {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .spec-header {
+            background: linear-gradient(90deg, #0ff, #f0f);
+            padding: 10px 20px;
+            font-size: 1.2em;
+            font-weight: bold;
+            letter-spacing: 3px;
+            color: #000;
+            text-transform: uppercase;
+        }
+        
+        .spec-content {
+            padding: 20px;
+        }
+        
+        .spec-link {
+            display: block !important;
+            color: #0ff !important;
+            text-decoration: none !important;
+            font-size: 1.8em !important;
+            text-align: center !important;
+            padding: 25px !important;
+            border: 3px solid #0ff !important;
+            margin: 30px auto !important;
+            transition: all 0.3s ease !important;
+            width: 85% !important;
+            background: rgba(0, 20, 30, 0.8) !important;
+            text-transform: uppercase !important;
+            letter-spacing: 3px !important;
+            font-weight: bold !important;
+            text-shadow: 0 0 10px #0ff !important;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5) !important;
+            position: relative;
+            z-index: 20 !important;
+        }
+        
+        .spec-link:hover {
+            background: rgba(0, 255, 255, 0.1);
+            color: #fff;
+            text-shadow: 0 0 10px #0ff;
+        }
+        
+        .spec-item {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            padding: 20px !important;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+            transition: all 0.2s;
+            min-height: 80px !important;
+        }
+        
+        .spec-item:hover {
+            background: rgba(0, 255, 255, 0.1);
+            padding-left: 10px;
+            border-color: #f0f;
+        }
+        
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+        
+        .spec-key {
+            color: #888;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+        
+        .spec-val {
+            color: #0ff;
+            font-weight: bold;
+            text-align: right;
+        }
+        
+        .performance-chart {
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #f0f;
+            padding: 30px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .chart-title {
+            text-align: center;
+            font-size: 1.5em;
+            color: #f0f;
+            margin-bottom: 30px;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+        
+        .bar-chart {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            height: 200px;
+            border-left: 2px solid #0ff;
+            border-bottom: 2px solid #0ff;
+            padding: 10px;
+        }
+        
+        .bar {
+            width: 60px;
+            background: linear-gradient(0deg, #0ff, #f0f);
+            position: relative;
+            animation: grow 2s ease-out;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        
+        @keyframes grow {
+            from { height: 0; }
+        }
+        
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8em;
+            color: #0ff;
+            white-space: nowrap;
+        }
+        
+        .bar-value {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.9em;
+            color: #f0f;
+            font-weight: bold;
+        }
+        
+        .engine-diagram {
+            background: #000;
+            border: 2px solid #0ff;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .diagram-title {
+            font-size: 1.8em;
+            color: #0ff;
+            margin-bottom: 30px;
+            letter-spacing: 5px;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        }
+        
+        .cylinder-layout {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 30px 0;
+        }
+        
+        .cylinder-bank {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .cylinder {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #f0f, #0ff);
+            border: 2px solid #0ff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #000;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        .cooling-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            border: 1px solid #0ff;
+            background: rgba(0, 255, 255, 0.1);
+            color: #0ff;
+            font-weight: bold;
+            letter-spacing: 2px;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid #0ff;
+            color: #f0f;
+            font-size: 0.9em;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+        
+        @media (max-width: 1024px) {
+            .specs-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .tech-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+            }
+            
+            .tech-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .cylinder-layout {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+    
+    <div class="container">
+        <header>
+            <div class="title-block">
+                <h1>993 C4S</h1>
+                <div class="model-code">TYPE 993 // 1997 // M64/21S</div>
+            </div>
+        </header>
+        
+        <div class="tech-grid">
+            <div class="tech-stat">
+                <div class="stat-value">282</div>
+                <div class="stat-label">Horsepower</div>
+            </div>
+            <div class="tech-stat">
+                <div class="stat-value">5.5</div>
+                <div class="stat-label">0-60 MPH (SEC)</div>
+            </div>
+            <div class="tech-stat">
+                <div class="stat-value">168</div>
+                <div class="stat-label">Top Speed (MPH)</div>
+            </div>
+            <div class="tech-stat">
+                <div class="stat-value">3.6L</div>
+                <div class="stat-label">Displacement</div>
+            </div>
+            <div class="tech-stat">
+                <div class="stat-value">AWD</div>
+                <div class="stat-label">Drivetrain</div>
+            </div>
+            <div class="tech-stat">
+                <div class="stat-value">6MT</div>
+                <div class="stat-label">Transmission</div>
+            </div>
+        </div>
+        
+        <div class="engine-diagram">
+            <div class="diagram-title">FLAT-6 ENGINE CONFIGURATION</div>
+            <div class="cooling-indicator">AIR-COOLED</div>
+            <div class="cylinder-layout">
+                <div class="cylinder-bank">
+                    <div class="cylinder">1</div>
+                    <div class="cylinder">2</div>
+                    <div class="cylinder">3</div>
+                </div>
+                <div style="display: flex; align-items: center; color: #f0f; font-size: 2em;">⟷</div>
+                <div class="cylinder-bank">
+                    <div class="cylinder">4</div>
+                    <div class="cylinder">5</div>
+                    <div class="cylinder">6</div>
+                </div>
+            </div>
+            <div style="margin-top: 20px; color: #888;">HORIZONTALLY OPPOSED</div>
+        </div>
+        
+        <div class="performance-chart">
+            <div class="chart-title">Performance Metrics</div>
+            <div class="bar-chart">
+                <div class="bar" style="height: 70%;">
+                    <div class="bar-value">250</div>
+                    <div class="bar-label">TORQUE (LB-FT)</div>
+                </div>
+                <div class="bar" style="height: 100%;">
+                    <div class="bar-value">282</div>
+                    <div class="bar-label">POWER (HP)</div>
+                </div>
+                <div class="bar" style="height: 45%;">
+                    <div class="bar-value">13.5</div>
+                    <div class="bar-label">1/4 MILE (SEC)</div>
+                </div>
+                <div class="bar" style="height: 85%;">
+                    <div class="bar-value">0.87</div>
+                    <div class="bar-label">LAT-G</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="specs-container">
+            <div class="spec-panel">
+                <div class="spec-header">TECHNICAL SPECIFICATIONS</div>
+                <div class="spec-content">
+                    <div class="spec-item">
+                        <a href="data.html" class="spec-link">Data</a>
+                    </div>
+                </div>
+            </div>
+            <div class="spec-panel">
+                <div class="spec-header">ENGINE SPECIFICATIONS</div>
+                <div class="spec-content">
+                    <div class="spec-item">
+                        <span class="spec-key">Configuration</span>
+                        <span class="spec-val">Flat-6</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Bore x Stroke</span>
+                        <span class="spec-val">100 x 76.4 mm</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Compression</span>
+                        <span class="spec-val">11.3:1</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Power @ RPM</span>
+                        <span class="spec-val">282 HP @ 6,100</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Torque @ RPM</span>
+                        <span class="spec-val">250 LB-FT @ 5,000</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Redline</span>
+                        <span class="spec-val">6,700 RPM</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Fuel System</span>
+                        <span class="spec-val">Motronic M5.2</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Cooling</span>
+                        <span class="spec-val">Air/Oil</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="spec-panel">
+                <div class="spec-header">DRIVETRAIN</div>
+                <div class="spec-content">
+                    <div class="spec-item">
+                        <span class="spec-key">Transmission</span>
+                        <span class="spec-val">G50/21 6-Speed</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Drive Type</span>
+                        <span class="spec-val">All-Wheel Drive</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Torque Split</span>
+                        <span class="spec-val">31:69 F/R</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Center Diff</span>
+                        <span class="spec-val">Viscous Coupling</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Final Drive</span>
+                        <span class="spec-val">3.44:1</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">1st Gear</span>
+                        <span class="spec-val">3.82:1</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">6th Gear</span>
+                        <span class="spec-val">0.75:1</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Clutch</span>
+                        <span class="spec-val">240mm Single Disc</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="spec-panel">
+                <div class="spec-header">CHASSIS DYNAMICS</div>
+                <div class="spec-content">
+                    <div class="spec-item">
+                        <span class="spec-key">Front Suspension</span>
+                        <span class="spec-val">MacPherson Strut</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Rear Suspension</span>
+                        <span class="spec-val">Multi-Link LSA</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Front Brakes</span>
+                        <span class="spec-val">322mm Vented</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Rear Brakes</span>
+                        <span class="spec-val">299mm Vented</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Front Wheels</span>
+                        <span class="spec-val">8J x 18"</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Rear Wheels</span>
+                        <span class="spec-val">10J x 18"</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Weight Balance</span>
+                        <span class="spec-val">38:62 F/R</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Curb Weight</span>
+                        <span class="spec-val">1,400 kg</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="spec-panel">
+                <div class="spec-header">PERFORMANCE DATA</div>
+                <div class="spec-content">
+                    <div class="spec-item">
+                        <span class="spec-key">0-60 MPH</span>
+                        <span class="spec-val">5.5 SEC</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">0-100 MPH</span>
+                        <span class="spec-val">12.4 SEC</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">1/4 Mile</span>
+                        <span class="spec-val">13.5 @ 104 MPH</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Top Speed</span>
+                        <span class="spec-val">270 KM/H</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">60-0 Braking</span>
+                        <span class="spec-val">119 FT</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Lateral Accel</span>
+                        <span class="spec-val">0.87 G</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Skidpad</span>
+                        <span class="spec-val">0.89 G</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-key">Power/Weight</span>
+                        <span class="spec-val">201 HP/Ton</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            993 C4S // The Final Air-Cooled Evolution // <a href="data.html" style="color: #0ff; text-decoration: none; border-bottom: 1px solid #0ff; margin: 0 10px;">Data</a> // <a href="contact.html" style="color: #0ff; text-decoration: none; border-bottom: 1px solid #0ff;">Contact</a>
+        </div>
+    </div>
+</body>
+</html>
