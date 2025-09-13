@@ -1166,34 +1166,6 @@ section h2:after {
     transform: translateY(0);
 }
 
-.image-zoom {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.9);
-    color: var(--dark);
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    opacity: 0;
-    transition: all 0.3s ease;
-    z-index: 10;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.image-zoom:hover {
-    background: white;
-    transform: scale(1.1);
-}
-
-.gallery-main:hover .image-zoom {
-    opacity: 1;
-}
-
 .gallery-thumbnails {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));

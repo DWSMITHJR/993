@@ -34,21 +34,30 @@ class EmailService {
 
                 // Create a hidden iframe to handle the mailto link
                 // This prevents issues with popup blockers
+                const iframeId = `email-iframe-${Date.now()}`;
                 const iframe = document.createElement('iframe');
+                iframe.id = iframeId;
+                iframe.name = iframeId;
                 iframe.style.display = 'none';
                 document.body.appendChild(iframe);
 
-                // Create and trigger the link
+                // Create and trigger the link with a unique ID
+                const linkId = `email-link-${Date.now()}`;
                 this.currentLink = document.createElement('a');
+                this.currentLink.id = linkId;
                 this.currentLink.href = mailtoLink;
                 this.currentLink.style.display = 'none';
                 
                 // Add target to ensure it works in all browsers
-                this.currentLink.target = '_blank';
+                this.currentLink.target = iframeId;
                 
                 // Append to body and click
                 document.body.appendChild(this.currentLink);
-                this.currentLink.click();
+                
+                // Use requestAnimationFrame to ensure the element is in the DOM
+                requestAnimationFrame(() => {
+                    this.currentLink.click();
+                });
 
                 // Schedule cleanup with a bit longer timeout to ensure the email client opens
                 this.timeoutId = setTimeout(() => {

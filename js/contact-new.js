@@ -5,6 +5,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('inquiry-form');
     if (!form) return;
     
+    // Prevent context menu on form fields to avoid duplicate ID errors
+    const formFields = form.querySelectorAll('input, textarea, select');
+    formFields.forEach(field => {
+        field.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        }, false);
+    });
+    
     const emailInput = document.getElementById('email');
     const modal = document.getElementById('email-preview-modal');
     const closeModal = document.querySelector('.close-modal');
