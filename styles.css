@@ -732,7 +732,8 @@ section h2:after {
     width: 50px;
     height: 2px;
     background: var(--accent);
-    transition: width 0.3s ease;
+    transition: all 0.3s ease;
+    border-radius: 1px;
 }
 
 .contact-info:hover h2::after, #form-container:hover h3::after {
@@ -748,11 +749,37 @@ section h2:after {
     font-weight: 400;
 }
 
-/* Horizontal Dividers */
+/* ==========================================================================
+   Dividers
+   ========================================================================== */
+.divider {
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.1);
+    margin: 1.5rem 0;
+    border: none;
+}
+
+.divider--accent {
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--secondary));
+    margin: 2rem 0;
+    border: none;
+}
+
 .contact-details {
-    margin: 25px 0 0;
-    padding: 25px 0 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    margin: 2rem 0 0;
+    padding: 2rem 0 0;
+    position: relative;
+}
+
+.contact-details::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.1);
 }
 
 .contact-details p {
@@ -1209,10 +1236,27 @@ section h2:after {
 
 /* Modal specific styles */
 .modal-body {
-    margin: 25px 0;
-    padding: 25px 0;
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    margin: 2rem 0;
+    padding: 2rem 0;
+    position: relative;
+}
+
+.modal-body::before,
+.modal-body::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.modal-body::before {
+    top: 0;
+}
+
+.modal-body::after {
+    bottom: 0;
 }
 
 .modal-description {
