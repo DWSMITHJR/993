@@ -11,13 +11,89 @@
     <link rel="stylesheet" href="css/contact-new.css">
     <link rel="stylesheet" href="css/toast.css">
     <style>
+        /* Sticky Header Styles */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sticky-nav {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px 20px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-top: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 0 2rem;
+        }
+        
+        .nav-links a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover, 
+        .nav-links a.active {
+            color: #ffcc00;
+        }
+        
+        .hagerty-nav-button {
+            background: #ffcc00;
+            color: #000 !important;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: 600 !important;
+            transition: all 0.3s ease;
+        }
+        
+        .hagerty-nav-button:hover {
+            background: #ffd633;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
         /* Tab Styling */
         .nav-tabs {
             display: flex;
+            justify-content: center;
             gap: 8px;
             padding: 0 20px 1px;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
+            margin: 0 auto 20px;
+            max-width: 1000px;
             overflow-x: auto;
             scrollbar-width: none;
         }
@@ -374,6 +450,63 @@
         .status-scheduled { background: rgba(0, 204, 102, 0.2); color: #00cc66; }
         .status-declined { background: rgba(255, 51, 51, 0.2); color: #ff6b6b; }
         
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 350px;
+        }
+        
+        .toast {
+            background: #2a2a2a;
+            color: #fff;
+            padding: 12px 20px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            border-left: 4px solid #666;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            animation: slideIn 0.3s ease forwards;
+        }
+        
+        .toast-success {
+            border-left-color: #00c853;
+        }
+        
+        .toast-error {
+            border-left-color: #ff3d00;
+        }
+        
+        .toast-warning {
+            border-left-color: #ff9100;
+        }
+        
+        .toast-info {
+            border-left-color: #00b0ff;
+        }
+        
+        .toast.fade-out {
+            animation: fadeOut 0.3s ease forwards;
+        }
+        
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes fadeOut {
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+        
         /* Form Controls */
         .form-group {
             margin-bottom: 1.2rem;
@@ -418,6 +551,8 @@
             white-space: nowrap;
             vertical-align: middle;
             cursor: pointer;
+-webkit-user-select: none;
+            -ms-user-select: none;
             user-select: none;
             border: 1px solid transparent;
             border-radius: 0.25rem;
@@ -988,8 +1123,8 @@
 
                                 <h4>🔗 Links:</h4>
                                 <ul>
-                                    <li>📊 <a href="https://www.hagerty.com/valuation-tools/Porsche/911/1997/1997-Porsche-911-Carrera_4S" target="_blank">Hagerty Valuation Tool</a></li>
-                                    <li>📸 <a href="https://dwsmithjr.github.io/993/" target="_blank">Full Photo Gallery & Details</a></li>
+                                    <li>📊 <a href="https://www.hagerty.com/valuation-tools/Porsche/911/1997/1997-Porsche-911-Carrera_4S" target="_blank" rel="noopener noreferrer">Hagerty Valuation Tool</a></li>
+                                    <li>📸 <a href="https://dwsmithjr.github.io/993/" target="_blank" rel="noopener noreferrer">Full Photo Gallery & Details</a></li>
                                 </ul>
 
                                 <p>I'm open to discussing the best approach for selling the vehicle, whether through consignment, direct purchase, or auction. Please let me know how you typically handle vehicles of this caliber and what the next steps might be.</p>
@@ -1216,7 +1351,229 @@
     <script src="js/auth.js"></script>
     <script src="js/toast.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // Sample documents data
+        const sampleDocuments = {
+            'Service Records': [
+                { id: 'svc1', name: 'Complete Service History.pdf', date: '2023-10-10', size: '2.4 MB' },
+                { id: 'svc2', name: 'Recent Maintenance Receipts.pdf', date: '2023-09-15', size: '1.8 MB' },
+                { id: 'svc3', name: 'Warranty Information.pdf', date: '2023-08-20', size: '3.2 MB' }
+            ],
+            'Vehicle Photos': [
+                { id: 'img1', name: 'Exterior Front View.jpg', date: '2023-10-05', size: '4.2 MB' },
+                { id: 'img2', name: 'Interior Dashboard.jpg', date: '2023-10-05', size: '3.9 MB' },
+                { id: 'img3', name: 'Engine Bay.jpg', date: '2023-10-05', size: '4.5 MB' },
+                { id: 'img4', name: 'Wheels and Tires.jpg', date: '2023-10-05', size: '3.7 MB' }
+            ],
+            'Ownership Documents': [
+                { id: 'own1', name: 'Title and Registration.pdf', date: '2023-01-15', size: '1.2 MB' },
+                { id: 'own2', name: 'Bill of Sale.pdf', date: '2023-01-15', size: '0.9 MB' },
+                { id: 'own3', name: 'Insurance Documents.pdf', date: '2023-10-01', size: '2.1 MB' }
+            ],
+            'Modifications': [
+                { id: 'mod1', name: 'Performance Upgrades List.pdf', date: '2023-05-10', size: '1.5 MB' },
+                { id: 'mod2', name: 'Receipts for Parts and Labor.pdf', date: '2023-05-10', size: '2.8 MB' },
+                { id: 'mod3', name: 'Dyno Test Results.pdf', date: '2023-05-15', size: '1.1 MB' }
+            ]
+        };
+
+        // Load documents into the documents tab
+        function loadDocuments() {
+            const documentsGrid = document.getElementById('documentsGrid');
+            if (!documentsGrid) return; // Exit if the element doesn't exist
+            
+            documentsGrid.innerHTML = '';
+            
+            // Get documents from local storage or use sample data
+            const documents = JSON.parse(localStorage.getItem('documents')) || sampleDocuments;
+            
+            // Create a grid of document categories
+            Object.entries(documents).forEach(([category, items]) => {
+                const categoryEl = document.createElement('div');
+                categoryEl.className = 'document-category';
+                
+                let itemsHtml = '';
+                items.forEach(doc => {
+                    const fileExt = doc.name.split('.').pop().toLowerCase();
+                    const fileIcon = getFileIcon(fileExt);
+                    
+                    itemsHtml += `
+                        <div class="document-item">
+                            <label>
+                                <input type="checkbox" id="doc-${doc.id}">
+                                <span class="document-icon">${fileIcon}</span>
+                                <span class="document-name">${doc.name}</span>
+                                <span class="document-status">${formatFileSize(doc.size)} • ${formatDate(doc.date)}</span>
+                            </label>
+                        </div>
+                    `;
+                });
+                
+                categoryEl.innerHTML = `
+                    <h3><i class="fas fa-folder"></i> ${category} (${items.length})</h3>
+                    ${itemsHtml}
+                    <div class="document-actions">
+                        <button class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-download"></i> Download All
+                        </button>
+                        <button class="btn btn-sm btn-outline-secondary">
+                            <i class="fas fa-trash"></i> Delete Selected
+                        </button>
+                    </div>
+                `;
+                
+                documentsGrid.appendChild(categoryEl);
+            });
+            
+            // Add upload area
+            const uploadArea = document.createElement('div');
+            uploadArea.className = 'upload-area';
+            uploadArea.innerHTML = `
+                <div class="upload-prompt" id="uploadPrompt">
+                    <i class="fas fa-cloud-upload-alt fa-3x"></i>
+                    <p>Drag & drop files here or click to browse</p>
+                    <small>Supports PDF, JPG, PNG up to 10MB</small>
+                    <input type="file" id="fileInput" multiple style="display: none;">
+                </div>
+                <div class="upload-progress" id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress" style="width: 0%"></div>
+                    </div>
+                    <p>Uploading <span id="uploadFileName"></span>...</p>
+                </div>
+            `;
+            
+            documentsGrid.appendChild(uploadArea);
+            
+            // Set up file upload handling
+            setupFileUpload();
+        }
+        
+        // Helper function to get file icon based on extension
+        function getFileIcon(ext) {
+            const icons = {
+                'pdf': '📄',
+                'jpg': '🖼️',
+                'jpeg': '🖼️',
+                'png': '🖼️',
+                'doc': '📝',
+                'docx': '📝',
+                'xls': '📊',
+                'xlsx': '📊',
+                'txt': '📄',
+                'zip': '🗄️',
+                'rar': '🗄️',
+                'mp4': '🎥',
+                'mov': '🎥',
+                'mp3': '🎵',
+                'wav': '🎵'
+            };
+            return icons[ext.toLowerCase()] || '📄';
+        }
+        
+        // Helper function to format file size
+        function formatFileSize(bytes) {
+            if (typeof bytes !== 'string' || !bytes.match(/\d+\s*[KMG]?B/i)) {
+                // If it's not a string with size info, return as is
+                return bytes;
+            }
+            return bytes; // Return the original string if it's already formatted
+        }
+        
+        // Set up file upload functionality
+        function setupFileUpload() {
+            const uploadArea = document.querySelector('.upload-area');
+            const uploadPrompt = document.getElementById('uploadPrompt');
+            const uploadProgress = document.getElementById('uploadProgress');
+            const fileInput = document.getElementById('fileInput');
+            
+            if (!uploadArea || !uploadPrompt || !uploadProgress || !fileInput) return;
+            
+            // Handle drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('drag-over');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('drag-over');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('drag-over');
+                
+                if (e.dataTransfer.files.length > 0) {
+                    handleFiles(e.dataTransfer.files);
+                }
+            });
+            
+            // Handle click to browse
+            uploadArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            // Handle file input change
+            fileInput.addEventListener('change', (e) => {
+                if (fileInput.files.length > 0) {
+                    handleFiles(fileInput.files);
+                }
+            });
+        }
+        
+        // Handle file uploads
+        function handleFiles(files) {
+            const uploadPrompt = document.getElementById('uploadPrompt');
+            const uploadProgress = document.getElementById('uploadProgress');
+            const uploadFileName = document.getElementById('uploadFileName');
+            const progressBar = document.querySelector('.progress');
+            
+            if (!uploadPrompt || !uploadProgress || !uploadFileName || !progressBar) return;
+            
+            // Show progress bar
+            uploadPrompt.style.display = 'none';
+            uploadProgress.style.display = 'block';
+            
+            // Simulate file upload progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress > 90) {
+                    progress = 90; // Slow down near the end
+                }
+                progressBar.style.width = `${progress}%`;
+            }, 200);
+            
+            // Process each file
+            Array.from(files).forEach((file, index) => {
+                uploadFileName.textContent = file.name;
+                
+                // In a real app, you would upload the file to a server here
+                // For this demo, we'll just simulate the upload
+                setTimeout(() => {
+                    clearInterval(interval);
+                    progressBar.style.width = '100%';
+                    
+                    // Show success message
+                    showToast(`"${file.name}" uploaded successfully`, 'success');
+                    
+                    // Reset the upload area after a short delay
+                    setTimeout(() => {
+                        uploadPrompt.style.display = 'block';
+                        uploadProgress.style.display = 'none';
+                        progressBar.style.width = '0%';
+                        
+                        // Reload documents to show the new file
+                        loadDocuments();
+                    }, 1500);
+                }, 2000);
+            });
+        }
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Initialize authentication first
+            const isAuth = await window.initAuth();
+            if (!isAuth) return;
             // Data Storage
             let dealerData = JSON.parse(localStorage.getItem('dealerData')) || [
                 {
@@ -1410,9 +1767,10 @@
                 }
             ];
 
+            // Initialize checklists object with all checkbox groups
             const checklists = {
                 mainChecklist: document.querySelectorAll('#mainChecklist input[type="checkbox"]'),
-                documentsChecklist: document.querySelectorAll('#documentsChecklist input[type="checkbox"]'),
+                documentsChecklist: document.querySelectorAll('#documentsChecklist input[type="checkbox"]')
             };
 
             let checkboxData = {};
@@ -1459,15 +1817,30 @@
                         updated = true;
                     }
                     
-                    checklists[listName].forEach((checkbox, index) => {
-                        // Initialize the item if it doesn't exist
-                        if (!checkboxData[listName][index]) {
-                            checkboxData[listName][index] = { id: index, checked: false };
+                    // Convert NodeList to Array for easier manipulation
+                    const checkboxes = Array.from(checklists[listName]);
+                    
+                    // Sort checkboxes by their data-index to ensure consistent ordering
+                    checkboxes.sort((a, b) => {
+                        return parseInt(a.dataset.index) - parseInt(b.dataset.index);
+                    });
+                    
+                    checkboxes.forEach((checkbox, index) => {
+                        // Use the data-index as the ID for consistency
+                        const itemId = parseInt(checkbox.dataset.index);
+                        
+                        // Find if we have saved state for this checkbox
+                        let itemData = checkboxData[listName].find(item => item.id === itemId);
+                        
+                        // If no saved state, create a new one
+                        if (!itemData) {
+                            itemData = { id: itemId, checked: false };
+                            checkboxData[listName].push(itemData);
                             updated = true;
                         }
                         
                         // Update the checkbox state
-                        checkbox.checked = checkboxData[listName][index].checked;
+                        checkbox.checked = itemData.checked;
                     });
                 }
                 
@@ -1510,34 +1883,40 @@
             }
 
             // Add change event listeners to all checkboxes
-            for (const listName in checklists) {
-                checklists[listName].forEach(checkbox => {
-                    checkbox.addEventListener('change', (event) => {
-                        const checklistName = event.target.dataset.checklist;
-                        const index = parseInt(event.target.dataset.index);
-                        const isChecked = event.target.checked;
-                        
-                        // Ensure the checklist and item exist in the data
-                        if (!checkboxData[checklistName]) {
-                            checkboxData[checklistName] = [];
-                        }
-                        
-                        if (!checkboxData[checklistName][index]) {
-                            checkboxData[checklistName][index] = { id: index, checked: isChecked };
-                        } else {
-                            checkboxData[checklistName][index].checked = isChecked;
-                        }
-                        
-                        // Save the updated state
-                        if (saveCheckboxData()) {
-                            const action = isChecked ? 'completed' : 'marked incomplete';
-                            const itemText = event.target.nextElementSibling?.textContent?.trim() || 'item';
-                            showToast(`"${itemText}" ${action}`, 'success');
-                        }
-                        
-                        updateProgress();
-                    });
+            function setupCheckboxListeners() {
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(checkbox => {
+                    // Remove any existing listeners to prevent duplicates
+                    checkbox.removeEventListener('change', handleCheckboxChange);
+                    // Add new listener
+                    checkbox.addEventListener('change', handleCheckboxChange);
                 });
+            }
+            
+            function handleCheckboxChange(event) {
+                const checkbox = event.target;
+                const listItem = checkbox.closest('li');
+                const checklistName = listItem?.closest('[data-checklist]')?.dataset.checklist;
+                const index = Array.from(listItem?.parentElement?.children || []).indexOf(listItem);
+                const isChecked = checkbox.checked;
+                
+                if (checklistName && !isNaN(index)) {
+                    // Ensure the checklist exists in the data
+                    if (!checkboxData[checklistName]) {
+                        checkboxData[checklistName] = [];
+                    }
+                    
+                    // Update the checkbox state in our data
+                    checkboxData[checklistName][index] = isChecked;
+                    
+                    // Save the updated state
+                    if (saveCheckboxData()) {
+                        const action = isChecked ? 'completed' : 'marked incomplete';
+                        const itemText = checkbox.nextElementSibling?.textContent?.trim() || 'item';
+                        showToast(`"${itemText}" ${action}`, 'success');
+                        updateProgress();
+                    }
+                }
             }
 
             // --- Tab Management ---
@@ -1759,7 +2138,18 @@
                 showTab(lastTab);
             }
 
+            // Initialize the page
             init();
+            
+            // Set up checkbox listeners after the page loads
+            document.addEventListener('DOMContentLoaded', () => {
+                // Load saved checkbox states
+                loadCheckboxData();
+                // Set up checkbox event listeners
+                setupCheckboxListeners();
+                // Update checkboxes to reflect loaded state
+                updateCheckboxes();
+            });
         });
     </script>
 </body>

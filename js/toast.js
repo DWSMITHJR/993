@@ -4,7 +4,7 @@
  * @param {string} [type='info'] - The type of notification ('success', 'error', 'warning', 'info')
  * @param {number} [duration=3000] - Duration in milliseconds to show the toast
  */
-function showToast(message, type = 'info', duration = 3000) {
+function showToast(message, type = 'info', duration = 2000) {
     // Get or create the toast container
     let toastContainer = document.getElementById('toast-container');
     if (!toastContainer) {
