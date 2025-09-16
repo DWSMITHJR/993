@@ -1,0 +1,1766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1997 Porsche 911 Carrera 4S - Dealer Admin</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/contact-new.css">
+    <link rel="stylesheet" href="css/toast.css">
+    <style>
+        /* Tab Styling */
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            padding: 0 20px 1px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+        
+        .nav-tabs::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .nav-tab {
+            background: none;
+            border: none;
+            color: #aaa;
+            padding: 12px 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 6px 6px 0 0;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            position: relative;
+            border: 1px solid transparent;
+            border-bottom: none;
+            margin-bottom: -1px;
+        }
+        
+        .nav-tab:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+        
+        .nav-tab.active {
+            background: #2a2a2a;
+            color: #ffcc00;
+            border-color: rgba(255, 255, 255, 0.1);
+            border-bottom-color: #2a2a2a;
+        }
+        
+        .nav-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #ffcc00;
+        }
+        
+        /* Dealer List Styling */
+        .dealer-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 3px solid #ffcc00;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .dealer-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dealer-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+            background: #ffcc00;
+            color: #1a1a1a;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.2em;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .dealer-info {
+            flex: 1;
+        }
+        
+        .dealer-info h4 {
+            margin: 0 0 8px 0;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-badge {
+            font-size: 0.7em;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-not-contacted {
+            background: #444;
+            color: #aaa;
+        }
+        
+        .status-contacted {
+            background: #ffcc00;
+            color: #1a1a1a;
+        }
+        
+        .status-followup {
+            background: #ff9900;
+            color: #1a1a1a;
+        }
+        
+        .status-scheduled {
+            background: #00cc66;
+            color: #1a1a1a;
+        }
+        
+        .status-declined {
+            background: #ff3333;
+            color: white;
+        }
+        
+        .dealer-info p {
+            margin: 4px 0;
+            color: #ddd;
+            font-size: 0.95em;
+        }
+        
+        .dealer-info .notes {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255, 204, 0, 0.2);
+            color: #aaa;
+            font-style: italic;
+        }
+        
+        .dealer-info a {
+            color: #ffcc00;
+            text-decoration: none;
+        }
+        
+        .dealer-info a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Layout Styling */
+        .container {
+            max-width: 100%;
+            padding: 0 20px;
+            margin: 0 auto;
+        }
+        
+        .content-wrapper {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .tab-content {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0 10%;
+            box-sizing: border-box;
+        }
+        
+        @media (max-width: 1200px) {
+            .tab-content {
+                padding: 0 5%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .tab-content {
+                padding: 0 2%;
+            }
+        }
+        
+        /* Card Styling */
+        .card {
+            background: #1e1e1e;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .card h2 {
+            color: #ffcc00;
+            margin-top: 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card h3 {
+            color: #fff;
+            margin: 25px 0 15px;
+            font-size: 1.2em;
+        }
+        
+        .card h4 {
+            color: #ffcc00;
+            margin: 20px 0 10px;
+            font-size: 1.1em;
+        }
+        
+        /* Grid Layout */
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .spec-item {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 3px solid #ffcc00;
+        }
+        
+        .spec-item strong {
+            display: block;
+            color: #ffcc00;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        
+        /* Strategy Cards */
+        .strategy-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .strategy-card {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .strategy-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .strategy-card h4 {
+            margin-top: 0;
+            color: #ffcc00;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .strategy-card p {
+            margin: 8px 0;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+        
+        .strategy-card strong {
+            color: #fff;
+        }
+        
+        /* Activity Log Styling */
+        .activity-item {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ffcc00;
+            position: relative;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .activity-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .activity-dealer {
+            font-weight: 600;
+            color: #ffcc00;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .activity-date {
+            color: #aaa;
+            font-size: 0.85em;
+            background: rgba(0,0,0,0.3);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+        
+        .activity-type {
+            display: inline-block;
+            font-size: 0.8em;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-right: 8px;
+            background: #333;
+            color: #ddd;
+        }
+        
+        .activity-notes {
+            background: rgba(255, 204, 0, 0.08);
+            padding: 12px 15px;
+            border-radius: 6px;
+            margin: 10px 0;
+            border-left: 3px solid rgba(255, 204, 0, 0.5);
+            position: relative;
+            line-height: 1.5;
+        }
+        
+        .activity-notes:before {
+            content: '💬';
+            position: absolute;
+            left: -30px;
+            top: 10px;
+            opacity: 0.6;
+        }
+        
+        .activity-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+        
+        .status-not-contacted { background: #444; color: #aaa; }
+        .status-contacted { background: rgba(255, 204, 0, 0.2); color: #ffcc00; }
+        .status-followup { background: rgba(255, 153, 0, 0.2); color: #ff9900; }
+        .status-scheduled { background: rgba(0, 204, 102, 0.2); color: #00cc66; }
+        .status-declined { background: rgba(255, 51, 51, 0.2); color: #ff6b6b; }
+        
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #fff;
+            background-color: #2a2a2a;
+            background-clip: padding-box;
+            border: 1px solid #444;
+            border-radius: 0.25rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+        
+        .form-control:focus {
+            border-color: #ffcc00;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(255, 204, 0, 0.25);
+        }
+        
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.5;
+            text-align: center;
+            text-decoration: none;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            user-select: none;
+            border: 1px solid transparent;
+            border-radius: 0.25rem;
+            transition: all 0.2s ease-in-out;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn-primary {
+            color: #1a1a1a;
+            background-color: #ffcc00;
+            border-color: #ffcc00;
+        }
+        
+        .btn-primary:hover {
+            background-color: #e6b800;
+            border-color: #d9b300;
+        }
+        
+        .btn-outline-secondary {
+            color: #ddd;
+            border-color: #666;
+            background-color: transparent;
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: #444;
+            border-color: #888;
+        }
+        
+        .btn-sm {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            border-radius: 0.2rem;
+        }
+        
+        /* Document Grid */
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .document-category {
+            background: #2a2a2a;
+            border-radius: 0.5rem;
+            padding: 1.25rem;
+            border-left: 3px solid #ffcc00;
+        }
+        
+        .document-category h3 {
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: #ffcc00;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .document-item {
+            margin-bottom: 0.75rem;
+            padding: 0.75rem;
+            background: #333;
+            border-radius: 0.4rem;
+            transition: all 0.2s ease;
+        }
+        
+        .document-item:hover {
+            background: #3a3a3a;
+            transform: translateX(3px);
+        }
+        
+        .document-item label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin: 0;
+        }
+        
+        .document-name {
+            flex: 1;
+            margin-left: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .document-status {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-left: 0.5rem;
+        }
+        
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #555;
+            border-radius: 0.5rem;
+            padding: 2rem 1rem;
+            text-align: center;
+            margin: 1.5rem 0;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: #ffcc00;
+            background: rgba(255, 204, 0, 0.05);
+        }
+        
+        .upload-area i {
+            color: #ffcc00;
+            margin-bottom: 1rem;
+        }
+        
+        .upload-area p {
+            margin: 0.5rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .upload-area small {
+            color: #888;
+            font-size: 0.85rem;
+        }
+        
+        /* Recent Uploads */
+        .recent-uploads {
+            margin-top: 2rem;
+        }
+        
+        .recent-uploads h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #ddd;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .no-files {
+            text-align: center;
+            padding: 2rem 1rem;
+            color: #666;
+            border: 1px dashed #444;
+            border-radius: 0.5rem;
+        }
+        
+        .no-files i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.7;
+        }
+        
+        .no-files p {
+            margin: 0.5rem 0 0;
+        }
+        
+        /* Document Actions */
+        .document-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #333;
+        }
+        
+        /* Email Template */
+        .email-template {
+            background: #2a2a2a;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .email-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #444;
+        }
+        
+        .email-content {
+            line-height: 1.6;
+        }
+        
+        .email-content h4 {
+            margin: 1.5rem 0 0.75rem;
+            color: #ffcc00;
+        }
+        
+        .email-content ul, .email-content ol {
+            padding-left: 1.5rem;
+            margin: 0.75rem 0;
+        }
+        
+        .email-content li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .vehicle-highlights {
+            background: rgba(255, 204, 0, 0.05);
+            border-left: 3px solid #ffcc00;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0 0.5rem 0.5rem 0;
+        }
+        
+        .vehicle-highlights h4 {
+            margin-top: 0;
+            color: #ffcc00;
+            font-size: 1.1rem;
+        }
+        
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .documents-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .document-actions {
+                flex-direction: column;
+            }
+            
+            .document-actions .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="toast-container"></div>
+    <div class="scanline"></div>
+    
+    <header class="main-header">
+        <nav class="sticky-nav">
+            <div class="logo">Porsche 911 Carrera 4S</div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="data.html">Specs</a>
+                <a href="admin.html" class="active">Admin</a>
+                <a href="https://www.hagerty.com/valuation-tools/Porsche/911/1997/1997-Porsche-911-Carrera_4S" target="_blank" rel="noopener noreferrer" class="hagerty-nav-button">
+                    <i class="fas fa-chart-line"></i> Hagerty Valuation
+                </a>
+            </div>
+        </nav>
+    </header>
+    
+    <div class="container">
+        <div class="content-wrapper">
+            <header class="page-header">
+                <h1>1997 Porsche 911 Carrera 4S</h1>
+                <p>Last of the Air-Cooled Era • VIN: WPOAA2998VS320631 • White/Maroon</p>
+            </header>
+
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="overview">📊 Overview</button>
+            <button class="nav-tab" data-tab="details">📋 Details</button>
+            <button class="nav-tab" data-tab="dealers">🏢 Dealer Contacts</button>
+            <button class="nav-tab" data-tab="documents">📄 Documents</button>
+        </nav>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="card">
+                <h2>🎯 Quick Stats</h2>
+                <table class="data-table">
+                    <tr>
+                        <th>Attribute</th>
+                        <th>Value</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Current Mileage</strong></td>
+                        <td>~135,000 miles</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Production Rarity</strong></td>
+                        <td>627 units in 1997</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Expected Price Range</strong></td>
+                        <td>$185,000 - $225,000</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Estimated Sale Timeline</strong></td>
+                        <td>45-60 days (collector market)</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>📊 Sales Progress</h2>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="overallProgress" style="width: 15%">15% Complete</div>
+                </div>
+                <ul class="checklist" id="mainChecklist">
+                    <li>
+                        <label>
+                            <input type="checkbox" data-checklist="mainChecklist" data-index="0">
+                            Initial valuation completed
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="checkbox" data-checklist="mainChecklist" data-index="1">
+                            Professional detailing scheduled
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="checkbox" data-checklist="mainChecklist" data-index="2">
+                            Photography session booked
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="checkbox" data-checklist="mainChecklist" data-index="3">
+                            Dealer contacts initiated
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="checkbox" data-checklist="mainChecklist" data-index="4">
+                            Marketing materials prepared
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="checkbox" data-checklist="mainChecklist" data-index="5">
+                            Serious buyer identified
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="checkbox" data-checklist="mainChecklist" data-index="6">
+                            Negotiation completed
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <input type="checkbox" data-checklist="mainChecklist" data-index="7">
+                            Sale finalized
+                        </label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Consolidated Details Tab -->
+        <div id="details" class="tab-content" style="display: none;">
+            <div class="card">
+                <h2>🔍 Vehicle Details</h2>
+                
+                <h3>🔧 Specifications</h3>
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <strong>Model</strong>
+                        911 Carrera 4S (993)
+                    </div>
+                    <div class="spec-item">
+                        <strong>Year</strong>
+                        1997
+                    </div>
+                    <div class="spec-item">
+                        <strong>Engine</strong>
+                        3.6L Flat-6 (285 HP)
+                    </div>
+                    <div class="spec-item">
+                        <strong>Transmission</strong>
+                        6-Speed Manual
+                    </div>
+                    <div class="spec-item">
+                        <strong>Exterior</strong>
+                        Polar Silver Metallic
+                    </div>
+                    <div class="spec-item">
+                        <strong>Interior</strong>
+                        Classic Gray Leather
+                    </div>
+                    <div class="spec-item">
+                        <strong>Mileage</strong>
+                        ~135,000 miles
+                    </div>
+                    <div class="spec-item">
+                        <strong>VIN</strong>
+                        WPOAA2998VS320631
+                    </div>
+                </div>
+
+                <h3>💰 Market Value</h3>
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <strong>Hagerty Valuation</strong>
+                        $85,000 - $110,000
+                    </div>
+                    <div class="spec-item">
+                        <strong>Bring a Trailer (avg.)</strong>
+                        $92,500
+                    </div>
+                    <div class="spec-item">
+                        <strong>PCAR Market Range</strong>
+                        $95,000 - $120,000
+                    </div>
+                </div>
+
+                <h3>📈 Selling Strategies</h3>
+                <div class="strategy-comparison">
+                    <div class="strategy-card">
+                        <h4>🚀 Quick Sale</h4>
+                        <p><strong>Price:</strong> $85K - $90K</p>
+                        <p><strong>Time:</strong> 1-2 weeks</p>
+                        <p>Local dealers, cash offers</p>
+                    </div>
+                    <div class="strategy-card">
+                        <h4>🏆 Premium Sale</h4>
+                        <p><strong>Price:</strong> $95K - $110K</p>
+                        <p><strong>Time:</strong> 1-3 months</p>
+                        <p>Collector market, enthusiasts</p>
+                    </div>
+                    <div class="strategy-card">
+                        <h4>💎 Auction</h4>
+                        <p><strong>Estimate:</strong> $90K - $120K</p>
+                        <p><strong>Time:</strong> 2-4 weeks</p>
+                        <p>Wide exposure, market-driven</p>
+                            <strong>Target Buyers</strong>
+                            Dealers & Immediate Buyers
+                        </div>
+                        <div class="spec-item">
+                            <strong>Commission</strong>
+                            8–10%
+                        </div>
+                        <div class="spec-item">
+                            <strong>Best For</strong>
+                            Quick liquidity, convenience
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dealers Tab -->
+        <div id="dealers" class="tab-content" style="display: none;">
+            <div class="card">
+                <h2>🏢 Atlanta Area Dealer Contacts</h2>
+                <div class="dealer-list" id="dealerList">
+                    <!-- Dealers will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📱 Recent Contact Activity</h2>
+                <div class="activity-log" id="activityLog">
+                    <!-- Activity will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📝 Log New Activity</h2>
+                <div class="contact-form">
+                    <form onsubmit="addActivity(event)">
+                        <div class="form-group">
+                            <label for="dealerSelect">Dealer</label>
+                            <select id="dealerSelect" name="dealerSelect" required 
+                                    title="Select a dealer from the list"
+                                    class="form-control">
+                                <option value="">Select Dealer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactType">Contact Type</label>
+                            <select id="contactType" name="contactType" required
+                                    title="Select the type of contact made"
+                                    class="form-control">
+                                <option value="">Select Type</option>
+                                <option value="call">📞 Phone Call</option>
+                                <option value="email">📧 Email</option>
+                                <option value="meeting">🤝 In-Person Meeting</option>
+                                <option value="followup">⏰ Follow-up</option>
+                                <option value="note">📝 Note</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="activityNotes">Notes</label>
+                            <textarea id="activityNotes" name="activityNotes" rows="3" 
+                                    placeholder="Contact details, response, next steps..."
+                                    title="Enter any additional notes about the contact"
+                                    class="form-control"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="statusUpdate">Status Update</label>
+                            <select id="statusUpdate" name="statusUpdate"
+                                    title="Update the status of this dealer contact"
+                                    class="form-control">
+                                <option value="">No Change</option>
+                                <option value="contacted">✅ Contacted</option>
+                                <option value="no-response">⏳ No Response</option>
+                                <option value="interested">👍 Interested</option>
+                                <option value="not-interested">👎 Not Interested</option>
+                                <option value="scheduled">📅 Scheduled Viewing</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> Add Activity
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📧 Communication Templates</h2>
+                <div class="template-section">
+                    <h3>📞 Phone Call Script</h3>
+                    <div class="spec-item">
+                        <p>"Hi, my name is Donald Smith, I'm in Atlanta, and I have a 1997 Porsche 911 Carrera 4S in white, in excellent condition, that I'm looking to sell quickly. I understand you handle high-end and collector vehicles, so I wanted to see if this might be a fit for your inventory or consignment program."</p>
+                    </div>
+                </div>
+                
+                <div class="template-section">
+                    <h3>📧 Follow-up Email Template</h3>
+                    <div class="spec-item">
+                        <div class="email-template">
+                            <div class="email-header">
+                                <div><strong>Subject:</strong> 1997 Porsche 911 Carrera 4S (White) – Consignment/Sale Inquiry</div>
+                                <button class="btn btn-sm btn-outline-secondary copy-btn" data-clipboard-target="#email-template-1">
+                                    <i class="far fa-copy"></i> Copy
+                                </button>
+                            </div>
+                            <div id="email-template-1" class="email-content">
+                                <p>Hi [Dealer's Name],</p>
+                                <p>Thank you for taking the time to speak with me today regarding my 1997 Porsche 911 Carrera 4S. As discussed, I'm looking for a smooth, quick sale with the right buyer, and I believe your dealership's network and marketing reach could be a great fit.</p>
+                                
+                                <div class="vehicle-highlights">
+                                    <h4>Vehicle Highlights:</h4>
+                                    <div class="spec-grid">
+                                        <div class="spec-item">
+                                            <strong>Year/Model</strong>
+                                            1997 Porsche 911 Carrera 4S (993)
+                                        </div>
+                                        <div class="spec-item">
+                                            <strong>Color</strong>
+                                            White exterior / Maroon interior
+                                        </div>
+                                        <div class="spec-item">
+                                            <strong>Mileage</strong>
+                                            ~135,000
+                                        </div>
+                                        <div class="spec-item">
+                                            <strong>Condition</strong>
+                                            Excellent – clean title, no major accident history
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h4>🔍 Additional Information:</h4>
+                                <ul>
+                                    <li>Complete service history from Jim Ellis Porsche and TechnicaMotorsports</li>
+                                    <li>All original manuals, documentation, and two sets of keys</li>
+                                    <li>Recent maintenance including [list major services]</li>
+                                    <li>No accidents, clean title in hand</li>
+                                </ul>
+
+                                <h4>📸 Photos & Documentation:</h4>
+                                <p>I've attached high-resolution photos and the window sticker for your review. Additional photos and documentation available upon request.</p>
+
+                                <h4>🔗 Links:</h4>
+                                <ul>
+                                    <li>📊 <a href="https://www.hagerty.com/valuation-tools/Porsche/911/1997/1997-Porsche-911-Carrera_4S" target="_blank">Hagerty Valuation Tool</a></li>
+                                    <li>📸 <a href="https://dwsmithjr.github.io/993/" target="_blank">Full Photo Gallery & Details</a></li>
+                                </ul>
+
+                                <p>I'm open to discussing the best approach for selling the vehicle, whether through consignment, direct purchase, or auction. Please let me know how you typically handle vehicles of this caliber and what the next steps might be.</p>
+
+                                <p>Thank you for your time and consideration. I look forward to hearing from you.</p>
+
+                                <p>Best regards,<br>
+                                Donald Smith<br>
+                                [Your Phone Number]<br>
+                                [Your Email]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                        <p>Please let me know:</p>
+                        <ol>
+                            <li>Your valuation for purchase and consignment</li>
+                            <li>Your commission structure and what's included in your fee (detailing, photography, marketing, etc.)</li>
+                            <li>Your estimated timeline for selling a vehicle like this</li>
+                            <li>Any additional information or documentation you need from me to proceed</li>
+                        </ol>
+                        
+                        <p>I'm ready to move forward quickly if the terms make sense, and can work with you to make delivery arrangements of the car to your location at your earliest convenience.</p>
+                        
+                        <p>Thank you again for your time and consideration. I look forward to hearing from you.</p>
+                        
+                        <p>Best regards,<br>
+                        Donald Woodson Smith<br>
+                        Atlanta, GA 30318<br>
+                        404-939-3663<br>
+                        donald@donaldwsmithjr.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Documents Tab -->
+        <div id="documents" class="tab-content" style="display: none;">
+            <div class="card">
+                <h2>📋 Required Documents</h2>
+                <p>Ensure all necessary documents are prepared for a smooth sales process.</p>
+                
+                <div class="documents-grid">
+                    <div class="document-category">
+                        <h3>📄 Ownership & Legal</h3>
+                        <ul class="checklist" id="documentsChecklist">
+                            <li class="document-item">
+                                <label>
+                                    <input type="checkbox" data-checklist="documentsChecklist" data-index="0">
+                                    <span class="checkmark"></span>
+                                    <span class="document-name">Clean Title</span>
+                                    <span class="document-status">Ready for transfer</span>
+                                </label>
+                            </li>
+                            <li class="document-item">
+                                <label>
+                                    <input type="checkbox" data-checklist="documentsChecklist" data-index="9">
+                                    <span class="checkmark"></span>
+                                    <span class="document-name">Bill of Sale</span>
+                                    <span class="document-status">Template prepared</span>
+                                </label>
+                            </li>
+                            <li class="document-item">
+                                <label>
+                                    <input type="checkbox" data-checklist="documentsChecklist" data-index="6">
+                                    <span class="checkmark"></span>
+                                    <span class="document-name">Porsche Certificate of Authenticity</span>
+                                    <span class="document-status">Original document</span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="document-category">
+                        <h3>🔧 Service Records</h3>
+                        <ul class="checklist">
+                            <li class="document-item">
+                                <label>
+                                    <input type="checkbox" data-checklist="documentsChecklist" data-index="1">
+                                    <span class="checkmark"></span>
+                                    <span class="document-name">Jim Ellis Porsche Records</span>
+                                    <span class="document-status">Complete history</span>
+                                </label>
+                            </li>
+                            <li class="document-item">
+                                <label>
+                                    <input type="checkbox" data-checklist="documentsChecklist" data-index="2">
+                                    <span class="checkmark"></span>
+                                    <span class="document-name">TechnicaMotorsports Records</span>
+                                    <span class="document-status">Complete history</span>
+                                </label>
+                            </li>
+                            <li class="document-item">
+                                <label>
+                                    <input type="checkbox" data-checklist="documentsChecklist" data-index="8">
+                                    <span class="checkmark"></span>
+                                    <span class="document-name">Vehicle Specification Sheet</span>
+                                    <span class="document-status">Detailed specs</span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="document-category">
+                        <h3>📸 Visual Documentation</h3>
+                        <ul class="checklist">
+                            <li class="document-item">
+                                <label>
+                                    <input type="checkbox" data-checklist="documentsChecklist" data-index="7">
+                                    <span class="checkmark"></span>
+                                    <span class="document-name">Professional Photos</span>
+                                    <span class="document-status">15+ high-res images</span>
+                                </label>
+                            </li>
+                            <li class="document-item">
+                                <label>
+                                    <input type="checkbox" data-checklist="documentsChecklist" data-index="5">
+                                    <span class="checkmark"></span>
+                                    <span class="document-name">Window Sticker</span>
+                                    <span class="document-status">Reproduction</span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="document-category">
+                        <h3>🔑 Vehicle Items</h3>
+                        <ul class="checklist">
+                            <li class="document-item">
+                                <label>
+                                    <input type="checkbox" data-checklist="documentsChecklist" data-index="3">
+                                    <span class="checkmark"></span>
+                                    <span class="document-name">Original Manuals</span>
+                                    <span class="document-status">Complete set</span>
+                                </label>
+                            </li>
+                            <li class="document-item">
+                                <label>
+                                    <input type="checkbox" data-checklist="documentsChecklist" data-index="4">
+                                    <span class="checkmark"></span>
+                                    <span class="document-name">Keys & Fobs</span>
+                                    <span class="document-status">2 sets available</span>
+                                </label>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <!-- Timeline Tab -->
+        <div id="timeline" class="tab-content" style="display: none;">
+            <div class="card">
+                <h2>⏱️ Typical Selling Timeline</h2>
+                <table class="data-table">
+                    <tr>
+                        <th>Sale Method</th>
+                        <th>Timeline</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Private Sale</strong></td>
+                        <td>30–60 days average for collector Porsche</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Consignment Dealer</strong></td>
+                        <td>2–8 weeks (depends on buyer network)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Auction</strong></td>
+                        <td>2–4 weeks from listing to close</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Direct Sale to Dealer</strong></td>
+                        <td>1–3 days (fastest, lowest payout)</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="card">
+                <h2>📅 Sample 8-Week Timeline</h2>
+                <table class="price-table">
+                    <thead>
+                        <tr>
+                            <th>Week</th>
+                            <th>Activity</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Valuation, inspection, detailing</td>
+                            <td><span class="status-interested">In Progress</span></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Photography, listing creation</td>
+                            <td><span class="status-contacted">Planned</span></td>
+                        </tr>
+                        <tr>
+                            <td>3–6</td>
+                            <td>Marketing, buyer outreach, showings</td>
+                            <td><span class="status-no-response">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>Offer accepted, payment secured</td>
+                            <td><span class="status-no-response">Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>8</td>
+                            <td>Title transfer, delivery</td>
+                            <td><span class="status-no-response">Pending</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/toast.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Data Storage
+            let dealerData = JSON.parse(localStorage.getItem('dealerData')) || [
+                {
+                    id: 1,
+                    name: "MotorCars of Atlanta",
+                    phone: "(833) 722-1303",
+                    website: "motorcarsofatlanta.com",
+                    address: "7865 Roswell Rd, Atlanta, GA 30350",
+                    contact: "Ethan Dilla",
+                    status: "no-response",
+                    notes: "Called and emailed info 9/12/25",
+                    priority: 1
+                },
+                {
+                    id: 2,
+                    name: "Atlanta Autos",
+                    phone: "(678) 213-4455",
+                    website: "atlantaautos.com",
+                    address: "1001 Cobb Pkwy N, Marietta, GA 30062",
+                    contact: "",
+                    status: "no-response",
+                    notes: "Called in information 9/13/25",
+                    priority: 2
+                },
+                {
+                    id: 3,
+                    name: "Gravity Autos Atlanta",
+                    phone: "(404) 531-1815",
+                    website: "gravityautosatlanta.com",
+                    address: "5465 Peachtree Industrial Blvd, Atlanta, GA 30341",
+                    contact: "",
+                    status: "no-response",
+                    notes: "Called 9/16/25, referred to Atlanta Autos",
+                    priority: 3
+                },
+                {
+                    id: 4,
+                    name: "Atlantic Luxury Auto, LLC",
+                    phone: "(678) 905-0054",
+                    website: "atlanticluxuryautos.com",
+                    address: "7100 Buford Hwy NE, Building A, Doraville, GA 30340",
+                    contact: "",
+                    status: "no-response",
+                    notes: "Called 9/16/25 no answer",
+                    priority: 4
+                },
+                {
+                    id: 5,
+                    name: "Cobb Luxury Cars",
+                    phone: "(770) 575-0303",
+                    website: "cobbluxurycars.com",
+                    address: "1400 Atlanta Rd SE, Marietta, GA 30060",
+                    contact: "",
+                    status: "not-interested",
+                    notes: "Not interested at this moment, try next week",
+                    priority: 5
+                },
+                {
+                    id: 6,
+                    name: "Hennessy Porsche North Atlanta",
+                    phone: "(770) 998-3000",
+                    website: "hennessyporsche.com",
+                    address: "11507 Alpharetta Hwy, Roswell, GA 30076",
+                    contact: "",
+                    status: "not-contacted",
+                    notes: "Official Porsche dealer - strong for collector cars",
+                    priority: 6
+                },
+                {
+                    id: 7,
+                    name: "Porsche Atlanta Perimeter",
+                    phone: "(770) 390-0025",
+                    website: "porscheatlantaperimeter.com",
+                    address: "5505 Peachtree Dunwoody Rd, Atlanta, GA 30342",
+                    contact: "",
+                    status: "not-contacted",
+                    notes: "Large inventory, certified pre-owned specialist",
+                    priority: 7
+                },
+                {
+                    id: 8,
+                    name: "Porsche Atlanta Northwest",
+                    phone: "(770) 726-0025",
+                    website: "porscheatlantanorthwest.com",
+                    address: "2890 Cobb Pkwy SE, Atlanta, GA 30339",
+                    contact: "",
+                    status: "not-contacted",
+                    notes: "Over 400 Porsche models, 4.7/5 star rating",
+                    priority: 8
+                },
+                {
+                    id: 9,
+                    name: "Porsche Atlanta Northeast",
+                    phone: "(678) 574-3300",
+                    website: "porscheatlantanortheast.com",
+                    address: "3520 Mall Blvd, Duluth, GA 30096",
+                    contact: "",
+                    status: "not-contacted",
+                    notes: "13-vehicle showroom, 21-bay service center",
+                    priority: 9
+                },
+                {
+                    id: 10,
+                    name: "Exotic Motors Atlanta",
+                    phone: "(770) 287-1000",
+                    website: "exoticmotorsatlanta.com",
+                    address: "3502 Browns Bridge Rd, Gainesville, GA 30501",
+                    contact: "",
+                    status: "not-contacted",
+                    notes: "Exotic and luxury specialist",
+                    priority: 10
+                },
+                {
+                    id: 11,
+                    name: "Merlin Auto Group",
+                    phone: "(404) 228-8955",
+                    website: "merlinautogroup.com",
+                    address: "1655 Church St Ext NW, Marietta, GA 30060",
+                    contact: "",
+                    status: "not-contacted",
+                    notes: "Ferrari, Porsche, and exotic car specialists",
+                    priority: 11
+                },
+                {
+                    id: 12,
+                    name: "Bentley Atlanta",
+                    phone: "(404) 467-0025",
+                    website: "bentleyatlanta.com",
+                    address: "5655 Peachtree Dunwoody Rd, Atlanta, GA 30342",
+                    contact: "",
+                    status: "not-contacted",
+                    notes: "High-end luxury dealer, serves southeast region",
+                    priority: 12
+                },
+                {
+                    id: 13,
+                    name: "European Auto Atlanta",
+                    phone: "(404) 541-4222",
+                    website: "europeanatl.com",
+                    address: "2964 Peachtree Rd NW, Atlanta, GA 30305",
+                    contact: "",
+                    status: "not-contacted",
+                    notes: "European luxury and exotic car specialist",
+                    priority: 13
+                },
+                {
+                    id: 14,
+                    name: "Prestige Imports",
+                    phone: "(855) 454-1227",
+                    website: "prestigeimports.com",
+                    address: "9077 Roswell Rd, Atlanta, GA 30350",
+                    contact: "",
+                    status: "not-contacted",
+                    notes: "Lamborghini, Bentley, Rolls-Royce dealer",
+                    priority: 14
+                },
+                {
+                    id: 15,
+                    name: "Classic AutoSmith",
+                    phone: "(770) 457-5244",
+                    website: "classicautosmith.com",
+                    address: "2655 Dallas Hwy, Marietta, GA 30064",
+                    contact: "",
+                    status: "not-contacted",
+                    notes: "Classic and collector car specialist",
+                    priority: 15
+                }
+            ];
+
+            let activityLog = JSON.parse(localStorage.getItem('activityLog')) || [
+                {
+                    date: "2025-09-16",
+                    dealer: "Cobb Luxury Cars",
+                    type: "call",
+                    notes: "Called back accidentally, said try next week",
+                    status: "not-interested"
+                },
+                {
+                    date: "2025-09-16",
+                    dealer: "Atlantic Luxury Auto, LLC",
+                    type: "call",
+                    notes: "No answer",
+                    status: "no-response"
+                },
+                {
+                    date: "2025-09-16",
+                    dealer: "Gravity Autos Atlanta",
+                    type: "call",
+                    notes: "Referred to Atlanta Autos - 678-343-1833",
+                    status: "no-response"
+                }
+            ];
+
+            const checklists = {
+                mainChecklist: document.querySelectorAll('#mainChecklist input[type="checkbox"]'),
+                documentsChecklist: document.querySelectorAll('#documentsChecklist input[type="checkbox"]'),
+            };
+
+            let checkboxData = {};
+
+            // Function to load checkbox data from localStorage
+            function loadCheckboxData() {
+                try {
+                    const savedData = localStorage.getItem('checklistData');
+                    if (savedData) {
+                        checkboxData = JSON.parse(savedData);
+                        // Ensure all checklists in the DOM are included in the data
+                        for (const listName in checklists) {
+                            if (!checkboxData[listName]) {
+                                checkboxData[listName] = [];
+                            }
+                        }
+                    } else {
+                        // Initialize with default structure if no data exists
+                        checkboxData = {};
+                        for (const listName in checklists) {
+                            checkboxData[listName] = Array.from(checklists[listName]).map((_, index) => ({
+                                id: index,
+                                checked: false
+                            }));
+                        }
+                        // Save the initial structure
+                        localStorage.setItem('checklistData', JSON.stringify(checkboxData));
+                    }
+                    updateCheckboxes();
+                    showToast('Checklist data loaded', 'success');
+                } catch (error) {
+                    console.error('Error loading checkbox data:', error);
+                    showToast('Error loading checklist data', 'error');
+                }
+            }
+
+            // Function to update checkboxes based on loaded data
+            function updateCheckboxes() {
+                let updated = false;
+                for (const listName in checklists) {
+                    // Ensure the checklist exists in the data
+                    if (!checkboxData[listName]) {
+                        checkboxData[listName] = [];
+                        updated = true;
+                    }
+                    
+                    checklists[listName].forEach((checkbox, index) => {
+                        // Initialize the item if it doesn't exist
+                        if (!checkboxData[listName][index]) {
+                            checkboxData[listName][index] = { id: index, checked: false };
+                            updated = true;
+                        }
+                        
+                        // Update the checkbox state
+                        checkbox.checked = checkboxData[listName][index].checked;
+                    });
+                }
+                
+                // Save if we made any updates
+                if (updated) {
+                    saveCheckboxData();
+                }
+                
+                updateProgress();
+            }
+
+            // Function to save checkbox data to localStorage
+            function saveCheckboxData() {
+                try {
+                    // Ensure all checklists are properly structured before saving
+                    for (const listName in checklists) {
+                        if (!checkboxData[listName]) {
+                            checkboxData[listName] = [];
+                        }
+                        
+                        // Make sure all checkboxes in the DOM are in the data
+                        checklists[listName].forEach((checkbox, index) => {
+                            if (!checkboxData[listName][index]) {
+                                checkboxData[listName][index] = { 
+                                    id: index, 
+                                    checked: checkbox.checked 
+                                };
+                            }
+                        });
+                    }
+                    
+                    localStorage.setItem('checklistData', JSON.stringify(checkboxData));
+                    showToast('Progress saved!', 'success');
+                    return true;
+                } catch (error) {
+                    console.error('Error saving checkbox data:', error);
+                    showToast('Error saving progress', 'error');
+                    return false;
+                }
+            }
+
+            // Add change event listeners to all checkboxes
+            for (const listName in checklists) {
+                checklists[listName].forEach(checkbox => {
+                    checkbox.addEventListener('change', (event) => {
+                        const checklistName = event.target.dataset.checklist;
+                        const index = parseInt(event.target.dataset.index);
+                        const isChecked = event.target.checked;
+                        
+                        // Ensure the checklist and item exist in the data
+                        if (!checkboxData[checklistName]) {
+                            checkboxData[checklistName] = [];
+                        }
+                        
+                        if (!checkboxData[checklistName][index]) {
+                            checkboxData[checklistName][index] = { id: index, checked: isChecked };
+                        } else {
+                            checkboxData[checklistName][index].checked = isChecked;
+                        }
+                        
+                        // Save the updated state
+                        if (saveCheckboxData()) {
+                            const action = isChecked ? 'completed' : 'marked incomplete';
+                            const itemText = event.target.nextElementSibling?.textContent?.trim() || 'item';
+                            showToast(`"${itemText}" ${action}`, 'success');
+                        }
+                        
+                        updateProgress();
+                    });
+                });
+            }
+
+            // --- Tab Management ---
+            const tabButtons = document.querySelectorAll('.nav-tab');
+            const tabs = document.querySelectorAll('.tab-content');
+
+            function showTab(tabId) {
+                tabs.forEach(tab => {
+                    tab.style.display = tab.id === tabId ? 'block' : 'none';
+                });
+                tabButtons.forEach(button => {
+                    button.classList.toggle('active', button.dataset.tab === tabId);
+                });
+                localStorage.setItem('lastActiveTab', tabId);
+            }
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => showTab(button.dataset.tab));
+            });
+
+            // --- Dealer Management ---
+            const dealerList = document.getElementById('dealerList');
+            const dealerSelect = document.getElementById('dealerSelect');
+
+            function loadDealers() {
+                dealerList.innerHTML = '';
+                if (dealerData.length === 0) {
+                    dealerList.innerHTML = '<p>No dealers found.</p>';
+                    return;
+                }
+                const sortedDealers = [...dealerData].sort((a, b) => a.priority - b.priority);
+                sortedDealers.forEach((dealer, index) => {
+                    const dealerEl = document.createElement('div');
+                    dealerEl.className = 'dealer-item';
+                    dealerEl.dataset.status = dealer.status || 'not-contacted';
+                    const websiteDisplay = dealer.website ? `<p><strong>Website:</strong> <a href="https://${dealer.website}" target="_blank" rel="noopener noreferrer">${dealer.website}</a></p>` : '';
+                    
+                    dealerEl.innerHTML = `
+                        <div class="dealer-number">${String(index + 1).padStart(2, '0')}</div>
+                        <div class="dealer-info">
+                            <h4>
+                                ${dealer.name}
+                                <span class="status-badge status-${dealer.status || 'not-contacted'}">
+                                    ${getStatusLabel(dealer.status || 'not-contacted')}
+                                </span>
+                            </h4>
+                            ${dealer.contact ? `<p><strong>Contact:</strong> ${dealer.contact}</p>` : ''}
+                            ${dealer.phone ? `<p><strong>Phone:</strong> <a href="tel:${dealer.phone}">${dealer.phone}</a></p>` : ''}
+                            ${websiteDisplay}
+                            ${dealer.address ? `<p><strong>Address:</strong> ${dealer.address}</p>` : ''}
+                            ${dealer.notes ? `<p class="notes"><strong>Notes:</strong> ${dealer.notes}</p>` : ''}
+                        </div>
+                    `;
+                    dealerList.appendChild(dealerEl);
+                });
+            }
+
+            function populateDealerSelect() {
+                dealerSelect.innerHTML = '<option value="">Select Dealer</option>';
+                dealerData.forEach(dealer => {
+                    const option = document.createElement('option');
+                    option.value = dealer.id;
+                    option.textContent = dealer.name;
+                    dealerSelect.appendChild(option);
+                });
+            }
+
+            const activityLogEl = document.getElementById('activityLog');
+
+            function getActivityIcon(type) {
+                const icons = {
+                    'call': '📞',
+                    'email': '📧',
+                    'meeting': '🤝',
+                    'followup': '⏰',
+                    'note': '📝'
+                };
+                return icons[type] || '📋';
+            }
+            
+            function formatActivityDate(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffDays = Math.floor((now - date) / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 0) return 'Today';
+                if (diffDays === 1) return 'Yesterday';
+                if (diffDays < 7) return `${diffDays} days ago`;
+                
+                return date.toLocaleDateString('en-US', { 
+                    month: 'short', 
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+            }
+            
+            function loadActivity() {
+                activityLogEl.innerHTML = '';
+                if (activityLog.length === 0) {
+                    activityLogEl.innerHTML = '<div class="activity-item"><p>No activity recorded yet. Add your first interaction!</p></div>';
+                    return;
+                }
+                
+                // Sort activities by date (newest first)
+                const sortedActivities = [...activityLog].sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                sortedActivities.forEach(activity => {
+                    const activityEl = document.createElement('div');
+                    activityEl.className = 'activity-item';
+                    
+                    const statusClass = activity.status ? `status-${activity.status}` : '';
+                    const statusLabel = activity.status ? getStatusLabel(activity.status) : '';
+                    
+                    activityEl.innerHTML = `
+                        <div class="activity-header">
+                            <div class="activity-dealer">
+                                <span class="activity-type">${getActivityIcon(activity.type)} ${activity.type}</span>
+                                ${activity.dealer}
+                            </div>
+                            <div class="activity-date" title="${new Date(activity.date).toLocaleString()}">
+                                ${formatActivityDate(activity.date)}
+                            </div>
+                        </div>
+                        ${activity.notes ? `
+                            <div class="activity-notes">
+                                ${activity.notes}
+                            </div>
+                        ` : ''}
+                        ${activity.status ? `
+                            <div class="activity-status ${statusClass}">
+                                ${statusLabel}
+                            </div>
+                        ` : ''}
+                    `;
+                    activityLogEl.appendChild(activityEl);
+                });
+            }
+
+            window.addActivity = function(event) {
+                event.preventDefault();
+                const dealerId = parseInt(dealerSelect.value);
+                const dealer = dealerData.find(d => d.id === dealerId);
+                if (!dealer) {
+                    alert('Please select a dealer.');
+                    return;
+                }
+
+                const newActivity = {
+                    date: new Date().toISOString(),
+                    dealer: dealer.name,
+                    type: document.getElementById('contactType').value,
+                    notes: document.getElementById('activityNotes').value,
+                    status: document.getElementById('statusUpdate').value
+                };
+
+                activityLog.unshift(newActivity);
+
+                if (newActivity.status) {
+                    dealer.status = newActivity.status;
+                }
+                if (newActivity.notes) {
+                    dealer.notes = dealer.notes ? `${dealer.notes} | ${newActivity.notes}` : newActivity.notes;
+                }
+
+                localStorage.setItem('dealerData', JSON.stringify(dealerData));
+                localStorage.setItem('activityLog', JSON.stringify(activityLog));
+                loadDealers();
+                loadActivity();
+                event.target.reset();
+            }
+
+            function getStatusLabel(status) {
+                const labels = {
+                    'contacted': '📞 Contacted',
+                    'not-contacted': '⏳ Not Contacted',
+                    'interested': '✅ Interested',
+                    'not-interested': '❌ Not Interested',
+                    'no-response': '📭 No Response'
+                };
+                return labels[status] || 'N/A';
+            }
+
+            // --- Progress Management ---
+            const overallProgress = document.getElementById('overallProgress');
+            
+            function updateProgress() {
+                try {
+                    const totalCheckboxes = document.querySelectorAll('input[type="checkbox"]').length;
+                    const checkedCheckboxes = document.querySelectorAll('input[type="checkbox"]:checked').length;
+                    const progress = totalCheckboxes > 0 ? Math.round((checkedCheckboxes / totalCheckboxes) * 100) : 0;
+                    
+                    if (overallProgress) {
+                        overallProgress.style.width = `${progress}%`;
+                        overallProgress.textContent = `${progress}% Complete`;
+                        
+                        // Update progress bar color based on completion
+                        if (progress < 30) {
+                            overallProgress.style.backgroundColor = '#e74c3c';
+                        } else if (progress < 70) {
+                            overallProgress.style.backgroundColor = '#f39c12';
+                        } else {
+                            overallProgress.style.backgroundColor = '#2ecc71';
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error updating progress:', error);
+                }
+            }
+
+            // --- Initialization ---
+            function init() {
+                loadCheckboxData();
+                loadDealers();
+                loadActivity();
+                populateDealerSelect();
+                const lastTab = localStorage.getItem('lastActiveTab') || 'overview';
+                showTab(lastTab);
+            }
+
+            init();
+        });
+    </script>
+</body>
+</html>

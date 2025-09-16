@@ -1,0 +1,31 @@
+# Normalize line endings for text files across platforms
+* text=auto
+
+# Explicitly mark common text types
+*.html text
+*.css text
+*.js text
+*.json text
+*.md text
+*.yml text
+*.yaml text
+*.xml text
+*.svg text
+
+# Mark binary assets to avoid EOL conversion and diffs
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.bmp binary
+*.webp binary
+*.tiff binary
+*.ico binary
+*.pdf binary
+*.heic binary
+*.heif binary
+
+# Windows batch and PowerShell scripts
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf

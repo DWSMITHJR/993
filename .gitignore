@@ -24,7 +24,6 @@ build/
 /images/**/*_small.*
 /images/**/*_medium.*
 /images/**/*_large.*
-/images/**/*.webp
 
 # Lighthouse reports
 lighthouse-report.*
@@ -33,5 +32,3 @@ lighthouse-report.*
 backup-*
 /.vs/
 *.vsidx
-/css/contact-new.css
-/css/contact.css
