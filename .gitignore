@@ -31,3 +31,7 @@ lighthouse-report.*
 
 # Backup files
 backup-*
+/.vs/993/CopilotIndices/17.14.995.13737
+/.vs/993/v17/TestStore/0
+/css/contact-new.css
+/css/contact.css
