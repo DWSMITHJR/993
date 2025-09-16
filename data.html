@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>993 C4S Technical Specifications</title>
+    <title>1997 Porsche 911 Carrera 4S (993) - Technical Specifications</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -19,6 +23,124 @@
             position: relative;
             min-height: 100vh;
             line-height: 1.6;
+            padding-top: 80px; /* Space for the fixed header */
+        }
+        
+        /* Sticky Header Styles */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.9);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .sticky-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px 20px;
+        }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: #ccc;
+            text-decoration: none;
+            font-size: 0.9em;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover, .nav-links a.active {
+            color: #ffcc00;
+        }
+        
+        .hagerty-nav-button {
+            background: #ffcc00;
+            color: #000 !important;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-weight: 600 !important;
+            transition: all 0.3s ease;
+        }
+        
+        .hagerty-nav-button:hover {
+            background: #ffd633;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Footer Styles */
+        footer {
+            background: #111;
+            color: #888;
+            padding: 30px 0;
+            margin-top: 60px;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+        
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        
+        .footer-links {
+            margin: 20px 0;
+        }
+        
+        .footer-links a {
+            color: #888;
+            margin: 0 10px;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: #ffcc00;
+        }
+        
+        .footer-copyright {
+            font-size: 0.9em;
+            color: #555;
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        /* Adjust existing header styles to not conflict with the main header */
+        .page-header {
+            position: relative;
+            z-index: 100;
+            text-align: center;
+            padding: 40px 20px 20px;
+            background: rgba(26, 26, 26, 0.9);
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
         body::before {
@@ -548,10 +670,27 @@
     </style>
 </head>
 <body>
+    <header class="main-header">
+        <nav class="sticky-nav">
+            <div class="logo">Porsche 911 Carrera 4S</div>
+            <div class="nav-links">
+                <a href="index.html#specs">Specs</a>
+                <a href="index.html#gallery">Gallery</a>
+                <a href="index.html#rarity">Rarity</a>
+                <a href="index.html#history">History</a>
+                <a href="index.html#contact">Contact</a>
+                <a href="data.html" class="active">Data</a>
+                <a href="https://www.hagerty.com/valuation-tools/porsche/911/1997/1997-porsche-911-carrera_4s?id=aCn1I000000CrtXSAS&vbeSqlId=106747&catalog=yes" target="_blank" rel="noopener noreferrer" class="hagerty-nav-button">
+                    <i class="fas fa-chart-line"></i> Hagerty Value
+                </a>
+            </div>
+        </nav>
+    </header>
+    
     <div class="scanline"></div>
     
     <div class="container">
-        <header>
+        <header class="page-header">
             <div class="title-block">
                 <h1>993 C4S</h1>
                 <div class="model-code">TYPE 993 // 1997 // M64/21S</div>
@@ -791,6 +930,23 @@
             993 C4S // The Final Air-Cooled Evolution
         </div>
     </div>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">1997 Porsche 911 Carrera 4S</div>
+            <div class="footer-links">
+                <a href="index.html">Home</a>
+                <a href="data.html">Technical Data</a>
+                <a href="privacy-policy.html">Privacy Policy</a>
+                <a href="terms-of-service.html">Terms of Service</a>
+            </div>
+            <div class="footer-copyright">
+                &copy; 2025 Rare Porsche Collection. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    
+    <script src="script.js"></script>
     <script>
         // Navigate to contact section on any key press
         document.addEventListener('keydown', function(e) {
