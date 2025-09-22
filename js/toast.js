@@ -5,15 +5,28 @@
  * @param {number} [duration=3000] - Duration in milliseconds to show the toast
  */
 function showToast(message, type = 'info', duration = 2000) {
-    // Get or create the toast container
-    let toastContainer = document.getElementById('toast-container');
-    if (!toastContainer) {
-        toastContainer = document.createElement('div');
-        toastContainer.id = 'toast-container';
-        document.body.appendChild(toastContainer);
+    try {
+        // Validate input
+        if (!message || typeof message !== 'string') {
+            console.error('Toast message must be a non-empty string');
+            return;
+        }
+
+        // Get or create the toast container
+        let toastContainer = document.getElementById('toast-container');
+        if (!toastContainer && document.body) {
+            toastContainer = document.createElement('div');
+            toastContainer.id = 'toast-container';
+            document.body.appendChild(toastContainer);
+        }
+        
+        if (!toastContainer) {
+            console.error('Could not create toast container');
+            return;
+        }
         
         // Add styles if not already added
-        if (!document.getElementById('toast-styles')) {
+        if (!document.getElementById('toast-styles') && document.head) {
             const style = document.createElement('style');
             style.id = 'toast-styles';
             style.textContent = `
@@ -26,6 +39,7 @@ function showToast(message, type = 'info', duration = 2000) {
                     flex-direction: column;
                     gap: 10px;
                     max-width: 350px;
+                    pointer-events: none;
                 }
                 
                 .toast {
@@ -33,7 +47,7 @@ function showToast(message, type = 'info', duration = 2000) {
                     padding: 12px 20px;
                     border-radius: 4px;
                     color: white;
-                    font-family: 'Montserrat', sans-serif;
+                    font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
                     font-size: 14px;
                     line-height: 1.5;
                     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -43,6 +57,7 @@ function showToast(message, type = 'info', duration = 2000) {
                     display: flex;
                     align-items: center;
                     gap: 10px;
+                    pointer-events: auto;
                 }
                 
                 .toast.show {
@@ -71,27 +86,21 @@ function showToast(message, type = 'info', duration = 2000) {
                     border-left: 4px solid #2980b9;
                 }
                 
-                .toast-close {
-                    margin-left: auto;
-                    background: none;
-                    border: none;
-                    color: inherit;
-                    cursor: pointer;
-                    font-size: 16px;
-                    opacity: 0.7;
-                    padding: 0 0 0 10px;
-                }
-                
-                .toast-close:hover {
-                    opacity: 1;
-                }
-                
                 .toast-icon {
                     font-size: 18px;
+                    flex-shrink: 0;
+                }
+                
+                .toast-message {
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
                 }
             `;
             document.head.appendChild(style);
         }
+    } catch (error) {
+        console.error('Error initializing toast container:', error);
+        return;
     }
 
     // Create the toast element
@@ -112,20 +121,11 @@ function showToast(message, type = 'info', duration = 2000) {
             break;
     }
     
-    // Create close button
-    const closeButton = document.createElement('button');
-    closeButton.className = 'toast-close';
-    closeButton.innerHTML = '&times;';
-    closeButton.onclick = () => {
-        hideToast(toast);
-    };
-    
     // Add content to toast
     toast.innerHTML = `
         <span class="toast-icon">${icon}</span>
         <span class="toast-message">${message}</span>
     `;
-    toast.appendChild(closeButton);
     
     // Add to container
     toastContainer.appendChild(toast);
@@ -143,17 +143,7 @@ function showToast(message, type = 'info', duration = 2000) {
         hideToast(toast);
     }, duration);
     
-    // Pause auto-hide on hover
-    toast.addEventListener('mouseenter', () => {
-        clearTimeout(hideTimeout);
-    });
-    
-    // Resume auto-hide when mouse leaves
-    toast.addEventListener('mouseleave', () => {
-        setTimeout(() => {
-            hideToast(toast);
-        }, 1000);
-    });
+    // No hover behavior - always auto-close after duration
     
     // Hide and remove the toast
     function hideToast(toastElement) {

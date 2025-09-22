@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dealer Management - 1997 Porsche 911 Carrera 4S</title>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .dealers-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(40, 40, 40, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dealers-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+        }
+        
+        .dealers-header h1 {
+            font-family: 'Playfair Display', serif;
+            color: #fff;
+            font-size: 2em;
+            margin: 0;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #d4af37, #f1c40f);
+            color: #1a1a1a;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+        
+        .btn i {
+            font-size: 1.1em;
+        }
+        
+        .dealers-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: rgba(30, 30, 30, 0.7);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .dealers-table th, 
+        .dealers-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+        
+        .dealers-table th {
+            background: rgba(212, 175, 55, 0.2);
+            color: #d4af37;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 0.5px;
+        }
+        
+        .dealers-table tbody tr {
+            transition: background-color 0.2s;
+        }
+        
+        .dealers-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .dealers-table tbody tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-edit, 
+        .btn-delete {
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            transition: all 0.2s;
+        }
+        
+        .btn-edit {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+        }
+        
+        .btn-edit:hover {
+            background: rgba(46, 204, 113, 0.3);
+        }
+        
+        .btn-delete {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
+        
+        .btn-delete:hover {
+            background: rgba(231, 76, 60, 0.3);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: #1e1e1e;
+            padding: 25px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+            position: relative;
+            border: 1px solid #444;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #444;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: #d4af37;
+            font-size: 1.5em;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: #999;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .close-btn:hover {
+            color: #fff;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #d4af37;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: #2c2c2c;
+            color: #fff;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .form-group textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #444;
+        }
+        
+        .btn-cancel {
+            background: #444;
+            color: #fff;
+            border: none;
+        }
+        
+        .btn-cancel:hover {
+            background: #555;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-active {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+        }
+        
+        .status-pending {
+            background: rgba(241, 196, 15, 0.2);
+            color: #f1c40f;
+        }
+        
+        .status-inactive {
+            background: rgba(149, 165, 166, 0.2);
+            color: #95a5a6;
+        }
+        
+        .status-no-response {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+        
+        @media (max-width: 768px) {
+            .dealers-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .action-btns {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .btn-edit, 
+            .btn-delete {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="sticky-nav">
+            <div class="logo">Porsche 911 Carrera 4S</div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="index.html#specs">Specs</a>
+                <a href="index.html#gallery">Gallery</a>
+                <a href="index.html#rarity">Rarity</a>
+                <a href="index.html#history">History</a>
+                <a href="data.html">Data</a>
+                <a href="index.html#contact">Contact</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="dealers-container">
+        <div class="dealers-header">
+            <h1>Dealer Management</h1>
+            <button id="addDealerBtn" class="btn"><i class="fas fa-plus"></i> Add Dealer</button>
+        </div>
+        
+        <table class="dealers-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Contact</th>
+                    <th>Specialty</th>
+                    <th>Last Contact</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="dealersTableBody">
+                <!-- Dealer data will be loaded here -->
+            </tbody>
+        </table>
+    </div>
+    
+    <!-- Add/Edit Dealer Modal -->
+    <div id="dealerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Dealer</h2>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <form id="dealerForm">
+                <input type="hidden" id="dealerId">
+                <div class="form-group">
+                    <label for="name">Dealer Name *</label>
+                    <input type="text" id="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <input type="text" id="address">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" id="phone">
+                </div>
+                <div class="form-group">
+                    <label for="website">Website</label>
+                    <input type="url" id="website">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email">
+                </div>
+                <div class="form-group">
+                    <label for="specialty">Specialty</label>
+                    <input type="text" id="specialty" placeholder="e.g., Luxury & Exotic Vehicles">
+                </div>
+                <div class="form-group">
+                    <label for="contactPerson">Contact Person</label>
+                    <input type="text" id="contactPerson">
+                </div>
+                <div class="form-group">
+                    <label for="lastContact">Last Contact Date</label>
+                    <input type="date" id="lastContact">
+                </div>
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status">
+                        <option value="No Response">No Response</option>
+                        <option value="Active">Active</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Inactive">Inactive</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelBtn" class="btn btn-cancel">Cancel</button>
+                    <button type="submit" class="btn">Save Dealer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Sample data - in a real app, this would come from a backend API
+        let dealers = [];
+        
+        // DOM Elements
+        const dealersTableBody = document.getElementById('dealersTableBody');
+        const addDealerBtn = document.getElementById('addDealerBtn');
+        const dealerModal = document.getElementById('dealerModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const dealerForm = document.getElementById('dealerForm');
+        const modalTitle = document.getElementById('modalTitle');
+        
+        // Form fields
+        const dealerIdInput = document.getElementById('dealerId');
+        const nameInput = document.getElementById('name');
+        const addressInput = document.getElementById('address');
+        const phoneInput = document.getElementById('phone');
+        const websiteInput = document.getElementById('website');
+        const emailInput = document.getElementById('email');
+        const specialtyInput = document.getElementById('specialty');
+        const contactPersonInput = document.getElementById('contactPerson');
+        const lastContactInput = document.getElementById('lastContact');
+        const statusInput = document.getElementById('status');
+        const notesInput = document.getElementById('notes');
+        
+        // Set today's date as default for last contact
+        lastContactInput.valueAsDate = new Date();
+        
+        // Event Listeners
+        addDealerBtn.addEventListener('click', () => openModal());
+        closeModal.addEventListener('click', closeModalFunc);
+        cancelBtn.addEventListener('click', closeModalFunc);
+        dealerForm.addEventListener('submit', saveDealer);
+        
+        // Close modal when clicking outside the content
+        window.addEventListener('click', (e) => {
+            if (e.target === dealerModal) {
+                closeModalFunc();
+            }
+        });
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDealers();
+        });
+        
+        // Load dealers from the data file
+        async function loadDealers() {
+            try {
+                // In a real app, this would be a fetch to your backend API
+                // For now, we'll use the sample data
+                const response = await fetch('data/dealers.dat');
+                const text = await response.text();
+                
+                // Parse the CSV data
+                const lines = text.split('\n');
+                const headers = lines[0].split(',');
+                
+                dealers = [];
+                for (let i = 1; i < lines.length; i++) {
+                    if (!lines[i].trim()) continue;
+                    
+                    const values = parseCSVLine(lines[i]);
+                    if (values.length !== headers.length) continue;
+                    
+                    const dealer = {};
+                    headers.forEach((header, index) => {
+                        dealer[header.trim()] = values[index] ? values[index].trim() : '';
+                    });
+                    
+                    // Only add if we have a name
+                    if (dealer.name) {
+                        dealers.push(dealer);
+                    }
+                }
+                
+                renderDealersTable();
+            } catch (error) {
+                console.error('Error loading dealers:', error);
+                // Fallback to sample data if there's an error
+                loadSampleData();
+            }
+        }
+        
+        // Helper function to parse CSV line with quotes
+        function parseCSVLine(line) {
+            const result = [];
+            let inQuotes = false;
+            let currentField = '';
+            
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                
+                if (char === '"') {
+                    inQuotes = !inQuotes;
+                } else if (char === ',' && !inQuotes) {
+                    result.push(currentField);
+                    currentField = '';
+                } else {
+                    currentField += char;
+                }
+            }
+            
+            // Add the last field
+            result.push(currentField);
+            return result;
+        }
+        
+        // Load sample data if the file can't be loaded
+        function loadSampleData() {
+            dealers = [
+                {
+                    id: '1',
+                    name: 'MotorCars of Atlanta',
+                    address: '7865 Roswell Rd, Atlanta, GA 30350',
+                    phone: '(833) 722-1303',
+                    website: 'https://www.motorcarsofatlanta.com',
+                    specialty: 'Luxury & Exotic Vehicle Sales',
+                    email: 'info@motorcarsofatlanta.com',
+                    lastContact: '2025-09-12',
+                    status: 'No Response',
+                    contactPerson: 'Ethan Dilla',
+                    notes: 'Called and emailed info 9/12/25'
+                },
+                {
+                    id: '2',
+                    name: 'Atlanta Autos',
+                    address: '1001 Cobb Pkwy N, Marietta, GA 30062',
+                    phone: '(678) 213-4455',
+                    website: 'https://www.atlantaautos.com',
+                    specialty: 'Luxury & Performance Vehicles',
+                    email: 'info@atlantaautos.com',
+                    lastContact: '2025-09-13',
+                    status: 'No Response',
+                    contactPerson: '',
+                    notes: 'Called in information 9/13/25'
+                },
+                {
+                    id: '3',
+                    name: 'Gravity Autos Atlanta',
+                    address: '5465 Peachtree Industrial Blvd, Atlanta, GA 30341',
+                    phone: '(404) 531-1815',
+                    website: 'https://www.gravityautosatlanta.com',
+                    specialty: 'Luxury & Exotic Automobiles',
+                    email: 'info@gravityautosatlanta.com',
+                    lastContact: '2025-09-16',
+                    status: 'No Response',
+                    contactPerson: '',
+                    notes: 'Called 9/16/25, referred to Atlanta Autos (678-343-1833)'
+                }
+            ];
+            
+            renderDealersTable();
+        }
+        
+        // Render the dealers table
+        function renderDealersTable() {
+            dealersTableBody.innerHTML = '';
+            
+            if (dealers.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="6" style="text-align: center; padding: 20px; color: #999;">
+                        No dealers found. Click "Add Dealer" to get started.
+                    </td>
+                `;
+                dealersTableBody.appendChild(row);
+                return;
+            }
+            
+            dealers.forEach(dealer => {
+                const row = document.createElement('tr');
+                
+                // Format the status badge
+                let statusClass = 'status-inactive';
+                if (dealer.status === 'Active') statusClass = 'status-active';
+                else if (dealer.status === 'Pending') statusClass = 'status-pending';
+                else if (dealer.status === 'No Response') statusClass = 'status-no-response';
+                
+                // Create contact info string
+                let contactInfo = '';
+                if (dealer.phone) contactInfo += dealer.phone;
+                if (dealer.email) {
+                    if (contactInfo) contactInfo += '<br>';
+                    contactInfo += dealer.email;
+                }
+                
+                row.innerHTML = `
+                    <td>
+                        <strong>${escapeHtml(dealer.name)}</strong><br>
+                        <small style="color: #999;">${escapeHtml(dealer.address || '')}</small>
+                    </td>
+                    <td>${contactInfo ? contactInfo : '<span style="color: #999;">No contact info</span>'}</td>
+                    <td>${escapeHtml(dealer.specialty || 'N/A')}</td>
+                    <td>${dealer.lastContact || 'N/A'}</td>
+                    <td><span class="status-badge ${statusClass}">${escapeHtml(dealer.status || 'N/A')}</span></td>
+                    <td class="action-btns">
+                        <button class="btn-edit" onclick="editDealer('${dealer.id}')">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                        <button class="btn-delete" onclick="deleteDealer('${dealer.id}')">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </button>
+                    </td>
+                `;
+                
+                dealersTableBody.appendChild(row);
+            });
+        }
+        
+        // Open modal for adding/editing a dealer
+        function openModal(dealerId = null) {
+            // Reset form
+            dealerForm.reset();
+            
+            if (dealerId) {
+                // Edit mode
+                const dealer = dealers.find(d => d.id === dealerId);
+                if (dealer) {
+                    modalTitle.textContent = 'Edit Dealer';
+                    dealerIdInput.value = dealer.id;
+                    nameInput.value = dealer.name || '';
+                    addressInput.value = dealer.address || '';
+                    phoneInput.value = dealer.phone || '';
+                    websiteInput.value = dealer.website || '';
+                    emailInput.value = dealer.email || '';
+                    specialtyInput.value = dealer.specialty || '';
+                    contactPersonInput.value = dealer.contactPerson || '';
+                    lastContactInput.value = dealer.lastContact || '';
+                    statusInput.value = dealer.status || 'No Response';
+                    notesInput.value = dealer.notes || '';
+                }
+            } else {
+                // Add mode
+                modalTitle.textContent = 'Add New Dealer';
+                dealerIdInput.value = '';
+                lastContactInput.valueAsDate = new Date();
+            }
+            
+            dealerModal.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+        
+        // Close the modal
+        function closeModalFunc() {
+            dealerModal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // Re-enable scrolling
+        }
+        
+        // Save dealer (add or update)
+        function saveDealer(e) {
+            e.preventDefault();
+            
+            const dealerData = {
+                id: dealerIdInput.value || Date.now().toString(),
+                name: nameInput.value.trim(),
+                address: addressInput.value.trim(),
+                phone: phoneInput.value.trim(),
+                website: websiteInput.value.trim(),
+                email: emailInput.value.trim(),
+                specialty: specialtyInput.value.trim(),
+                contactPerson: contactPersonInput.value.trim(),
+                lastContact: lastContactInput.value,
+                status: statusInput.value,
+                notes: notesInput.value.trim()
+            };
+            
+            if (!dealerData.name) {
+                alert('Dealer name is required');
+                return;
+            }
+            
+            if (dealerIdInput.value) {
+                // Update existing dealer
+                const index = dealers.findIndex(d => d.id === dealerIdInput.value);
+                if (index !== -1) {
+                    dealers[index] = dealerData;
+                }
+            } else {
+                // Add new dealer
+                dealers.push(dealerData);
+            }
+            
+            // In a real app, you would save to a backend API here
+            // For now, we'll just update the UI
+            renderDealersTable();
+            closeModalFunc();
+            
+            // Show success message
+            alert(`Dealer "${dealerData.name}" has been ${dealerIdInput.value ? 'updated' : 'added'} successfully.`);
+        }
+        
+        // Delete a dealer
+        function deleteDealer(dealerId) {
+            if (confirm('Are you sure you want to delete this dealer? This action cannot be undone.')) {
+                const index = dealers.findIndex(d => d.id === dealerId);
+                if (index !== -1) {
+                    const dealerName = dealers[index].name;
+                    dealers.splice(index, 1);
+                    
+                    // In a real app, you would make an API call to delete from the backend
+                    renderDealersTable();
+                    
+                    // Show success message
+                    alert(`Dealer "${dealerName}" has been deleted.`);
+                }
+            }
+        }
+        
+        // Helper function to escape HTML
+        function escapeHtml(unsafe) {
+            if (!unsafe) return '';
+            return unsafe
+                .toString()
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+        
+        // Make functions available globally for inline event handlers
+        window.editDealer = openModal;
+        window.deleteDealer = deleteDealer;
+    </script>
+</body>
+</html>

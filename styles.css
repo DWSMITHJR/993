@@ -2432,7 +2432,661 @@ section h2:after {
     border-top: 1px solid #eee;
 }
 
+.btn-secondary {
+    background-color: var(--btn-secondary-bg, #444);
+    color: var(--text-color, #e0e0e0);
+    border: 1px solid var(--border-color, #555);
+}
+
+.btn-secondary:hover {
+    background-color: var(--btn-secondary-hover, #555);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .dealers-table th, 
+    .dealers-table td {
+        padding: 0.75rem;
+    }
+    
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-edit, 
+    .btn-delete {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .dealers-section {
+        padding: 1.5rem 0;
+    }
+    
+    .dealer-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-box {
+        max-width: 100%;
+    }
+    
+    .modal-content {
+        margin: 1rem;
+        width: calc(100% - 2rem);
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+    }
+    
+    /* Responsive table */
+    .dealers-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .dealers-table thead {
+        display: none;
+    }
+    
+    .dealers-table tbody tr {
+        display: block;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: var(--card-bg, #1e1e1e);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        border: 1px solid var(--border-color, #333);
+    }
+    
+    .dealers-table tbody td {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border: none;
+        border-bottom: 1px solid var(--border-color, #333);
+    }
+    
+    .dealers-table tbody td:before {
+        content: attr(data-label);
+        font-weight: 600;
+        margin-right: 1rem;
+        color: var(--text-muted, #888);
+        flex: 0 0 120px;
+    }
+    
+    .dealers-table tbody td:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+    
+    .dealers-table tbody td .action-buttons {
+        margin-left: auto;
+    }
+}
+
+/* Animation for modal */
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal.show .modal-content {
+    animation: modalFadeIn 0.3s ease-out forwards;
+}
+
+/* Status badge animation */
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(40, 167, 69, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(40, 167, 69, 0);
+    }
+}
+
+.status-badge.status-active {
+    position: relative;
+}
+
+.status-badge.status-active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50px;
+    animation: pulse 2s infinite;
+    pointer-events: none;
+}
+
+/* Form validation styles */
+.form-group input:invalid,
+.form-group select:invalid,
+.form-group textarea:invalid {
+    border-color: #dc3545;
+}
+
+.form-group input:invalid:focus,
+.form-group select:invalid:focus,
+.form-group textarea:invalid:focus {
+    box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.invalid-feedback {
+    display: none;
+    width: 100%;
+    margin-top: 0.25rem;
+    font-size: 0.875em;
+    color: #dc3545;
+}
+
+.was-validated .form-control:invalid ~ .invalid-feedback,
+.was-validated .form-control:invalid ~ .invalid-tooltip,
+.form-control.is-invalid ~ .invalid-feedback,
+.form-control.is-invalid ~ .invalid-tooltip {
+    display: block;
+}
+
+/* Loading state */
+.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.7;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: var(--primary-color, #ffcc00);
+    animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-muted, #888);
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+    color: var(--primary-color, #ffcc00);
+}
+
+.empty-state h3 {
+    margin-bottom: 0.5rem;
+    color: var(--text-color, #e0e0e0);
+}
+
+.empty-state p {
+    margin-bottom: 1.5rem;
+    color: var(--text-muted, #888);
+}
+
+/* Print styles */
+@media print {
+    .dealer-controls,
+    .action-buttons {
+        display: none !important;
+    }
+    
+    .dealers-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    .dealers-table th,
+    .dealers-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        color: #000 !important;
+    }
+    
+    .dealers-table th {
+        background-color: #f2f2f2 !important;
+        color: #000 !important;
+        -webkit-print-color-adjust: exact;
+    }
+    
+    .status-badge {
+        border: 1px solid currentColor !important;
+        background-color: transparent !important;
+        color: #000 !important;
+        -webkit-print-color-adjust: exact;
+    }
+    
+    .dealers-section {
+        padding: 0;
+        background: #fff !important;
+    }
+    
+    .dealers-table-container {
+        box-shadow: none;
+        border: none;
+    }
+}
+
+/* ==========================================================================
+   Dealer Management Section
+   ========================================================================== */
 /* Footer */
+/* ==========================================================================
+   Dealer Management Section
+   ========================================================================== */
+.dealers-section {
+    padding: 4rem 2rem;
+    background-color: var(--surface);
+    color: var(--text);
+}
+
+.dealers-section .container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+}
+
+.dealers-section h2 {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    color: var(--primary);
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.dealers-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background: var(--secondary);
+}
+
+.dealer-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+}
+
+.search-box input {
+    width: 100%;
+    padding: 0.6rem 1rem 0.6rem 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    font-family: var(--font-base);
+    background-color: var(--background);
+    color: var(--text);
+    transition: var(--transition);
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 2px rgba(204, 0, 0, 0.1);
+}
+
+.dealers-table-container {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.dealers-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+}
+
+.dealers-table th {
+    background-color: var(--light);
+    color: var(--primary);
+    font-weight: 600;
+    text-align: left;
+    padding: 1rem 1.25rem;
+    border-bottom: 2px solid var(--border);
+}
+
+.dealers-table td {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+}
+
+.dealers-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.dealers-table tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.35rem 0.75rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-active {
+    background-color: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.status-pending {
+    background-color: rgba(255, 193, 7, 0.1);
+    color: #ffc107;
+}
+
+.status-inactive {
+    background-color: rgba(108, 117, 125, 0.1);
+    color: #6c757d;
+}
+
+.status-no-response {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-family: var(--font-base);
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+}
+
+.btn i {
+    margin-right: 0.5rem;
+    font-size: 0.9em;
+}
+
+.btn-sm {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+}
+
+.btn-primary {
+    background-color: var(--secondary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #a30000;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-edit {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-edit:hover {
+    background-color: #138496;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    opacity: 1;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border-radius: 8px;
+    width: 100%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+}
+
+.modal.show .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--primary);
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.75rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    line-height: 1;
+    padding: 0.25rem;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: var(--text);
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.form-group {
+    flex: 1;
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.6rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    font-family: var(--font-base);
+    background-color: var(--background);
+    color: var(--text);
+    transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 2px rgba(204, 0, 0, 0.1);
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid var(--border);
+    background-color: var(--surface);
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .dealers-table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .dealer-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .search-box {
+        max-width: 100%;
+    }
+    
+    .action-buttons {
+        flex-wrap: wrap;
+    }
+    
+    .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.85rem;
+    }
+}
+
 footer {
     background-color: var(--footer-bg);
     color: var(--footer-text);
@@ -2668,6 +3322,64 @@ footer {
 .hagerty-nav-button i {
     font-size: 1em;
     margin-right: 2px;
+}
+
+/* Hagerty Dropdown */
+.hagerty-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.hagerty-dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: var(--background);
+    min-width: 200px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    z-index: 1000;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 5px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.hagerty-dropdown-content a {
+    color: var(--text);
+    padding: 10px 15px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s ease;
+}
+
+.hagerty-dropdown-content a:hover {
+    background-color: var(--gray);
+    color: var(--secondary);
+}
+
+.hagerty-dropdown-content a i {
+    width: 18px;
+    text-align: center;
+}
+
+.hagerty-dropdown:hover .hagerty-dropdown-content {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.hagerty-nav-button .fa-caret-down {
+    margin-left: 4px;
+    font-size: 0.8em;
+    transition: transform 0.3s ease;
+}
+
+.hagerty-dropdown:hover .hagerty-nav-button .fa-caret-down {
+    transform: rotate(180deg);
 }
 
 .social-links {

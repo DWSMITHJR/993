@@ -20,5 +20,33 @@
         { "id": 7, "checked": false },
         { "id": 8, "checked": false },
         { "id": 9, "checked": false }
+    ],
+    "dealers": [
+        {
+            "id": 1,
+            "name": "Porsche South Atlanta",
+            "address": "6200 Peachtree Dunwoody Rd, Atlanta, GA 30328",
+            "phone": "(770) 350-8000",
+            "email": "info@porschesouthatlanta.com",
+            "website": "https://www.porschesouthatlanta.com",
+            "contact": "John Smith",
+            "status": "not-contacted",
+            "specialty": "Porsche",
+            "notes": "Specializes in high-end Porsche models",
+            "activities": []
+        },
+        {
+            "id": 2,
+            "name": "Hennessy Porsche",
+            "address": "5730 Peachtree Industrial Blvd, Norcross, GA 30092",
+            "phone": "(770) 300-7000",
+            "email": "info@hennessyporsche.com",
+            "website": "https://www.hennessyporsche.com",
+            "contact": "Sarah Johnson",
+            "status": "contacted",
+            "specialty": "Porsche",
+            "notes": "Luxury Porsche dealership with excellent service",
+            "activities": []
+        }
     ]
 }
